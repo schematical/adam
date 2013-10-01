@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="v13">
+    <CLASSES>
+      <root url="file://$APPLICATION_HOME_DIR$/sdk/extras/android/support/v13" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$APPLICATION_HOME_DIR$/sdk/extras/android/support/v13/src/ics" />
+      <root url="file://$APPLICATION_HOME_DIR$/sdk/extras/android/support/v13/src/java" />
+      <root url="file://$APPLICATION_HOME_DIR$/sdk/extras/android/support/v13/src/ics-mr1" />
+    </SOURCES>
+    <jarDirectory url="file://$APPLICATION_HOME_DIR$/sdk/extras/android/support/v13" recursive="false" />
+  </library>
+</component>

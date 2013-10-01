@@ -20,8 +20,12 @@ import android.view.Menu;
 import android.widget.FrameLayout;
 import android.location.LocationManager;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
 
-public class View extends Activity implements SensorEventListener,LocationListener {
+
+public class View extends Activity implements SensorEventListener,LocationListener, GooglePlayServicesClient.ConnectionCallbacks,
+        GooglePlayServicesClient.OnConnectionFailedListener  {
 
     private Camera mCamera;
     private AdamView mPreview;
@@ -46,26 +50,15 @@ public class View extends Activity implements SensorEventListener,LocationListen
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mOrientation = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+        mOrientation = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
         // Acquire a reference to the system Location Manager
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        // Define a listener that responds to location updates
-        LocationListener locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
 
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-            public void onProviderEnabled(String provider) {}
-
-            public void onProviderDisabled(String provider) {}
-        };
 
         // Register the listener with the Location Manager to receive location updates
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
     }
 
@@ -74,10 +67,10 @@ public class View extends Activity implements SensorEventListener,LocationListen
     }
 
     public void onSensorChanged(SensorEvent event) {
-        float azimuth_angle = event.values[0];
-        float pitch_angle = event.values[1];
-        float roll_angle = event.values[2];
-        mPreview.UpdateOrientation(azimuth_angle, pitch_angle, roll_angle);
+        float xAngle = event.values[0];
+        float yAngle = event.values[1];
+        float zAngle = event.values[2];
+        mPreview.UpdateOrientation(xAngle, yAngle, zAngle);
     }
     @Override
     protected void onResume() {
@@ -112,14 +105,38 @@ public class View extends Activity implements SensorEventListener,LocationListen
 
     public void onLocationChanged(Location location) {
         mPreview.UpdateLocation(location);
+        // Report to the UI that the location was updated
+        String msg = "Updated Location: " +
+                Double.toString(location.getLatitude()) + "," +
+                Double.toString(location.getLongitude());
+        Log.d("Adam", msg);
     }
 
-    public void onStatusChanged(String provider, int status, Bundle extras) {}
+    public void onStatusChanged(String provider, int status, Bundle extras) {
 
-    public void onProviderEnabled(String provider) {}
+    }
 
-    public void onProviderDisabled(String provider) {}
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    public void onProviderDisabled(String provider) {
+
+    }
 
 
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.d("Adam", "CONNECTED!");
+    }
 
+    @Override
+    public void onDisconnected() {
+        Log.d("Adam", "DISCONNECTED!");
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.d("Adam", "Connection Failed :(");
+    }
 }
