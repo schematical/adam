@@ -29,8 +29,8 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback {
     private double yAngle;
     private double zAngle;
     private AdamRadar mRadar;
-    private Location mLoctaion;
-    private Hashtable mObjects = new Hashtable();
+    public Location mLoctaion;
+
 
 
     public AdamView(Context context, Camera camera) {
@@ -49,13 +49,9 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback {
         // deprecated setting, but required on Android versions prior to 3.0
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         setWillNotDraw(false);
-        InitDemo();
-    }
-    public void InitDemo(){
-        mObjects.put("test", new AdamObject(){
 
-        });
     }
+
     public void UpdateOrientation(double nXAngle,double nYAngle,double nZAngle){
         xAngle = nXAngle;
         yAngle = nYAngle;
@@ -86,6 +82,7 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback {
             mLat = mLoctaion.getLongitude();
             mLng = mLoctaion.getLatitude();
         }
+        Hashtable<String, AdamObject> mObjects = ((AdamActivityMain) getContext()).GetAdamObjects();
         Enumeration names = mObjects.keys();
         while(names.hasMoreElements()) {
             String str = (String) names.nextElement();
@@ -187,4 +184,5 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback {
         Log.d("Adam",msg);
         this.mLoctaion = location;
     }
+
 }
