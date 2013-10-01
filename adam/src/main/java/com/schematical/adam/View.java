@@ -50,7 +50,7 @@ public class View extends Activity implements SensorEventListener,LocationListen
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mOrientation = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        mOrientation = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
 
         // Acquire a reference to the system Location Manager
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -67,9 +67,10 @@ public class View extends Activity implements SensorEventListener,LocationListen
     }
 
     public void onSensorChanged(SensorEvent event) {
-        float xAngle = event.values[0];
-        float yAngle = event.values[1];
-        float zAngle = event.values[2];
+        double xAngle = (event.values[0]/180) * Math.PI;// * Math.PI / 2;
+        double yAngle = (event.values[1]/180)  * Math.PI;// * Math.PI / 2;
+        double zAngle = (event.values[2]/180) * Math.PI;// * Math.PI / 2;
+
         mPreview.UpdateOrientation(xAngle, yAngle, zAngle);
     }
     @Override

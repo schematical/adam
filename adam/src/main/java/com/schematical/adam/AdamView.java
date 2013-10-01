@@ -25,9 +25,10 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback {
     private Camera mCamera;
     private Canvas mCanvas;
     private Paint paint;
-    private float xAngle;
-    private float yAngle;
-    private float zAngle;
+    private double xAngle;
+    private double yAngle;
+    private double zAngle;
+    private AdamRadar mRadar;
     private Location mLoctaion;
     private Hashtable mObjects = new Hashtable();
 
@@ -35,7 +36,7 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback {
     public AdamView(Context context, Camera camera) {
         super(context);
         mCamera = camera;
-
+        mRadar = new AdamRadar(this);
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(0xff00ff00);
         paint.setTextSize(40);
@@ -55,7 +56,7 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback {
 
         });
     }
-    public void UpdateOrientation(float nXAngle,float nYAngle,float nZAngle){
+    public void UpdateOrientation(double nXAngle,double nYAngle,double nZAngle){
         xAngle = nXAngle;
         yAngle = nYAngle;
         zAngle = nZAngle;
@@ -64,59 +65,71 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback {
     public void onDraw(Canvas canvas){
         mCanvas = canvas;
         super.onDraw(canvas);
+
+        //Draw radar
+        mRadar.Draw(canvas, xAngle, yAngle, zAngle);
+
+
+        String msg = "XYZ: " + Double.toString(xAngle) + "- Y:" + Double.toString(yAngle) + " - Z:" + Double.toString(zAngle);
+        canvas.drawText(
+                msg,
+                100,
+                100,
+                paint
+        );
+
+
+
+        double mLat = -89.38712835104843;//mLoctaion.getLongitude()
+        double mLng = 43.074808234970945;//mLoctaion.getLatitude()
         if(mLoctaion != null){
+            mLat = mLoctaion.getLongitude();
+            mLng = mLoctaion.getLatitude();
+        }
+        Enumeration names = mObjects.keys();
+        while(names.hasMoreElements()) {
+            String str = (String) names.nextElement();
 
-            Enumeration names = mObjects.keys();
-            while(names.hasMoreElements()) {
-                String str = (String) names.nextElement();
+            AdamObject mObject = (AdamObject) mObjects.get(str);
 
-                AdamObject mObject = (AdamObject) mObjects.get(str);
+            //Find the diff between the Angle were facing and the angle of the object
 
-                //Find the diff between the Angle were facing and the angle of the object
+            float x = 0;
+            float y = 0;
 
-                float x = 0;
-                float y = 0;
-                double lngDiff = mLoctaion.getLongitude() - mObject.GetLng();
-                double latDiff = (mLoctaion.getLatitude() - mObject.GetLat());
-                double distance = Math.sqrt(Math.pow(lngDiff, 2) + Math.pow(latDiff,2));
-                double mObjectRelitiveAngle = Math.atan(lngDiff / latDiff);
-                double mObjectAngleDiff = mObjectRelitiveAngle - xAngle;
+            double lngDiff = mLng - mObject.GetLng();
+            double latDiff = (mLat - mObject.GetLat());
+            double distance = Math.sqrt(Math.pow(lngDiff, 2) + Math.pow(latDiff,2));
+            double mObjectRelitiveAngle = Math.atan(lngDiff / latDiff);
+            double mObjectAngleDiff = mObjectRelitiveAngle - xAngle;
 
-                String msg = "XYZ: " + Double.toString(xAngle) + "- Y:" + Double.toString(yAngle) + " - Z:" + Double.toString(zAngle);
-                canvas.drawText(
-                        msg,
-                        100,
-                        100,
-                        paint
+
+
+            msg = "Diff Angle: " + Double.toString(mObjectAngleDiff) + "   - Relitive Angle: " + Double.toString(mObjectRelitiveAngle);
+            canvas.drawText(
+                    msg,
+                    100,
+                    200,
+                    paint
+            );
+
+            double bigX = Math.cos(xAngle) * canvas.getWidth();
+            double bigY = Math.sin(xAngle) * canvas.getWidth();//Only used to determin if we render or not
+            double screenX = bigX + canvas.getWidth()/2;
+
+            //Figure out how wide the angle of view seen by the camera is
+            double viewWidth = Math.PI/2;
+            //First determin if it is in the view range
+
+
+           if(bigY > 0 ){
+                mObject.SetGoalXY(
+                    (int) Math.round(screenX),
+                    Math.round(canvas.getHeight()/2)
                 );
-
-
-                msg = "Diff Angle: " + Double.toString(mObjectAngleDiff) + "   - Relitive Angle: " + Double.toString(mObjectRelitiveAngle);
-                canvas.drawText(
-                        msg,
-                        100,
-                        200,
-                        paint
-                );
-                double bigX = (Math.cos(mObjectAngleDiff) * distance);
-                double screenX = bigX + canvas.getWidth()/2;
-
-                //Figure out how wide the angle of view seen by the camera is
-                double viewWidth = Math.PI/2;
-                //First determin if it is in the view range
-
-
-                if(
-                    (mObjectAngleDiff < Math.PI) &&
-                    (mObjectAngleDiff > 0)
-                ){
-                    mObject.SetGoalXY(
-                        (int) Math.round(screenX),
-                        Math.round(canvas.getHeight()/2)
-                    );
-                    mObject.Draw(canvas);
-                }
+                mObject.Draw(canvas);
             }
+
         }
         postInvalidate();
 
