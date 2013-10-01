@@ -76,6 +76,7 @@ public class AdamObject {
                     new Timestamp(date.getTime())
             );
             pings.add(ap);
+            UpdateLatLng();
         }
     }
     public void UpdateLatLng(){
@@ -86,7 +87,9 @@ public class AdamObject {
         double c = 0;//distance between p1 and p2
         double aAngle = 0;
         double bAngle = 0;
-        
+        double cTX = 9999;
+        double cTY = 9999;
+        double guessCt = 0;
         for(int i = 0; i < pings.size(); i++){
             p2 = p1;
             p1 = pings.get(i);
@@ -109,7 +112,19 @@ public class AdamObject {
                 double c1X = Math.cos(aAngleRelGround + aAngle) * a;
                 double c2Y = Math.sin(aAngleRelGround - aAngle) * a;
                 double c2X = Math.cos(aAngleRelGround - aAngle) * a;
+                if(cTX == 9999){
+                    cTX = c1X;
+                    cTY = c1Y;
+                }else{
+                    cTX += c1X;
+                    cTY += c1Y;
+                }
+                cTX += c2X;
+                cTY += c2Y;
+                guessCt += 2;
             }
+            this.lat = cTX / guessCt;
+            this.lng = cTY / guessCt;
 
         }
 
