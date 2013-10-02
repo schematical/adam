@@ -1,5 +1,8 @@
 package com.schematical.adam;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.sql.Timestamp;
 
 /**
@@ -7,14 +10,17 @@ import java.sql.Timestamp;
  */
 public class AdamPing {
     public static final double METERS_DMB = 3/10;
+    private final double pingFrequency;
     public double pingStrength;
     public double pingLat;
     public double pingLng;
     public double pingElev;
     public double pingAccuracy;
-    public Timestamp pingTimestamp;
-    AdamPing(double strength, double lat, double lng, double elev, double accuracy, Timestamp ts){
+    public double pingType;
+    public long pingTimestamp;
+    AdamPing(double strength, double frequency, double lat, double lng, double elev, double accuracy, long ts){
         pingStrength = strength;
+        pingFrequency = frequency;
         pingLat = lat;
         pingLng = lng;
         pingElev = elev;
@@ -32,7 +38,11 @@ public class AdamPing {
     public double AngleInRelationTo(AdamPing p2){
         double o = (this.pingLat - p2.pingLat);
         double a = (this.pingLng - p2.pingLng);
-        return Math.atan(o/a);
+        if(a == 0){
+            return Math.atan(0);
+        }
+        double angle = Math.atan(o/a);
+        return angle;
     }
     public static double distFrom(double lat1, double lng1, double lat2, double lng2) {
         double earthRadius = 3958.75;
@@ -47,5 +57,23 @@ public class AdamPing {
         int meterConversion = 1609;
 
         return new Float(dist * meterConversion).floatValue();
+    }
+    public JSONObject toJSONObject() {
+        JSONObject jObj = new JSONObject();
+
+        try {
+            jObj.put("pingLat", this.pingLat);
+            jObj.put("pingLng", this.pingLng);
+            jObj.put("pingElev", this.pingElev);
+            jObj.put("pingAccuracy", this.pingAccuracy);
+            jObj.put("pingStrength", this.pingStrength);
+            jObj.put("pingFrequency", this.pingFrequency);
+            jObj.put("pingTimestamp", this.pingTimestamp);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return jObj;
+
     }
 }

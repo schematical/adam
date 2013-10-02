@@ -18,17 +18,26 @@ public class AdamWifiManager extends BroadcastReceiver {
         mC = c;
     }
     public void onReceive(Context c, Intent intent) {
-        sb = new StringBuilder();
         wifiList = mC.wifiManager.getScanResults();
-        for(int i = 0; i < wifiList.size(); i++){
-            /*sb.append(new Integer(i+1).toString() + ".");
-            sb.append((wifiList.get(i)).toString());
-            sb.append("\\n");*/
-            ScanResult sr = wifiList.get(i);
-            mC.UpdateAdamObject(
-                    sr.SSID,
-                    sr
-            );
+        if(
+            (mC.GetLocation() != null) &&
+            (mC.allowPing)
+        ){
+            sb = new StringBuilder();
+
+            for(int i = 0; i < wifiList.size(); i++){
+                /*sb.append(new Integer(i+1).toString() + ".");
+                sb.append((wifiList.get(i)).toString());
+                sb.append("\\n");*/
+                ScanResult sr = wifiList.get(i);
+                mC.UpdateAdamObject(
+                        sr.SSID,
+                        sr
+                );
+            }
+            mC.pingCt += 1;
+            mC.allowPing = false;
+            mC.SyncWithServers();
         }
 
 

@@ -14,6 +14,9 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager;
 import android.net.wifi.ScanResult;
 import android.content.BroadcastReceiver;
@@ -33,21 +36,27 @@ import java.util.Hashtable;
 public class AdamActivityMain extends Activity implements SensorEventListener,LocationListener, GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener  {
 
-
+    public static final double PING_DISTANCE = 10;
     private Hashtable mObjects = new Hashtable();
 
 
     private Camera mCamera;
-    private AdamView mPreview;
+    public AdamView mPreview;
 
     private Paint paint;
 
     private SensorManager mSensorManager;
     private Sensor mOrientation;
+    private String status;
 
     public WifiManager wifiManager;
     private AdamWifiManager wifiReceiver;
+    private AdamSaveDriver saveDriver;
     private Location mLocation;
+    private Location mLastPingLocation;
+    public Location mOrigLocation;
+    public boolean allowPing = false;
+    public int pingCt = 0;
 
     public AdamActivityMain() {
     }
@@ -58,9 +67,11 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        status = "Uninitialized";
         // Create an instance of Camera
         mCamera = getCameraInstance();
-
+        saveDriver = new AdamSaveDriver(this);
+        saveDriver.Load();
         // Create our Preview view and set it as the content of our activity.
         mPreview = new AdamView(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
@@ -72,15 +83,35 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         // Register the listener with the Location Manager to receive location updates
+        this.SetStatus("Waiting for GPS");
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
+        if(this.IsWifiConnected()){
+            this.SetStatus("Cannot scan while connected to wifi");
+            saveDriver.Save();
+        }else{
+            wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
 
-        wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
-        wifiReceiver  = new AdamWifiManager(this);
-        wifiManager.startScan();
+            wifiReceiver  = new AdamWifiManager(this);
+            registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+            wifiManager.startScan();
+        }
 
-        registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-        wifiManager.startScan();
+    }
+    public boolean IsWifiConnected(){
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        if (mWifi.isConnected()) {
+            return true;
+        }
+        return false;
+    }
+    public String GetStatus(){
+        return status;
+    }
+    public void SetStatus(String nStatus){
+        status = nStatus;
     }
     public void UpdateAdamObject(String id, Object data){
         AdamObject ao = (AdamObject) mObjects.get(id);
@@ -91,7 +122,23 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
         ao.Update(data);
 
     }
+    public void SyncWithServers(){
+        this.SetStatus("Syncing with servers");
+        this.saveDriver.Save();
+    }
     public Location GetLocation(){
+       /*
+
+            double mLat = -89.38712835104843;//mLoctaion.getLongitude()
+            double mLng = 43.074808234970945;//mLoctaion.getLatitude()
+            Location newLocation = new Location("gps");
+            mLocation.setLatitude(mLat);
+            mLocation.setLongitude(mLng);
+            mLocation.setAccuracy(3.0f);
+            return newLocation;
+
+        }*/
+
         return mLocation;
     }
     public Hashtable<String, AdamObject>GetAdamObjects(){
@@ -148,11 +195,19 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
 
     public void onLocationChanged(Location location) {
         mLocation = location;
-        // Report to the UI that the location was updated
-        String msg = "Updated Location: " +
-                Double.toString(location.getLatitude()) + "," +
-                Double.toString(location.getLongitude());
-        Log.d("Adam", msg);
+        if(
+            (mLastPingLocation == null) ||
+            (mLastPingLocation.distanceTo(mLocation) > mLocation.getAccuracy() * (1.5))
+        ){
+            if(mOrigLocation == null){
+                mOrigLocation = mLocation;
+            }
+            mLastPingLocation = mLocation;
+            this.allowPing = true;
+
+        }
+
+
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -160,11 +215,11 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
     }
 
     public void onProviderEnabled(String provider) {
-
+        this.SetStatus("GPS Enabled");
     }
 
     public void onProviderDisabled(String provider) {
-
+        this.SetStatus("GPS Disabled");
     }
 
 
