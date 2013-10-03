@@ -18,12 +18,14 @@ public class AdamPing {
     public double pingAccuracy;
     public double pingType;
     public long pingTimestamp;
-    AdamPing(double strength, double frequency, double lat, double lng, double elev, double accuracy, long ts){
-        pingStrength = strength;
-        pingFrequency = frequency;
+    AdamPing( double lat, double lng, double elev, double strength, double frequency, double accuracy, long ts){
+
         pingLat = lat;
         pingLng = lng;
         pingElev = elev;
+        pingStrength = strength;
+        pingFrequency = frequency;
+
         pingAccuracy = accuracy;
         pingTimestamp = ts;
     }

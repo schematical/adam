@@ -117,9 +117,9 @@ public class AdamObject {
                         pingLat,
                         pingLng,
                         pingElev,
-                        pingAccuracy,
                         pingStrength,
                         pingFrequency,
+                        pingAccuracy,
                         pingTimestamp
                     );
                     pings.add(objPing);
@@ -137,11 +137,11 @@ public class AdamObject {
             Location objLocation = am.GetLocation();
             if(objLocation != null){
                 AdamPing ap = new AdamPing(
-                        sr.level,
-                        sr.frequency,
                         objLocation.getLatitude(),
                         objLocation.getLongitude(),
                         objLocation.getAltitude(),
+                        sr.level,
+                        sr.frequency,
                         objLocation.getAccuracy(),
                         date.getTime()
                 );
@@ -231,6 +231,6 @@ public class AdamObject {
 
     }
     public void ClearPings(){
-        //this.pings = new ArrayList<AdamPing>();
+        this.pings = new ArrayList<AdamPing>();
     }
 }
