@@ -23,6 +23,8 @@ public class AdamObject {
     protected AdamActivityMain am;
     private final Paint paint;
     protected String id;
+    protected String aId;
+    protected String alias;
     protected int goalX = 0;
     protected int goalY = 0;
     protected int currX = 0;
@@ -93,6 +95,9 @@ public class AdamObject {
             try{
                 JSONObject jObj = (JSONObject) data;
                 this.id = (String)jObj.get("id");
+                if(jObj.has("alias")){
+                    this.alias = (String)jObj.get("alias");
+                }
                 if(jObj.has("lat") && jObj.has("lng")){
                     this.lat = (Double)jObj.get("lat");
                     this.lng = (Double)jObj.get("lng");
@@ -130,7 +135,23 @@ public class AdamObject {
                 e.printStackTrace();
             }
         }
-
+        if(data instanceof AdamBluetoothScanResult){
+            AdamBluetoothScanResult sr = (AdamBluetoothScanResult) data;
+            Location objLocation = am.GetLocation();
+            AdamPing ap = new AdamPing(
+                    objLocation.getLatitude(),
+                    objLocation.getLongitude(),
+                    objLocation.getAltitude(),
+                    sr.rssi,
+                    0,
+                    objLocation.getAccuracy(),
+                    date.getTime()
+            );
+            this.alias = sr.name;
+            ap.pingType = AdamBluetooth.TYPE;
+            pings.add(ap);
+            //UpdateLatLng();
+        }
         if(data instanceof ScanResult){
             //Track in a list of pings
             ScanResult sr = (ScanResult) data;
@@ -213,6 +234,8 @@ public class AdamObject {
 
         try {
             jObj.put("id", this.id);
+            jObj.put("alias", this.alias);
+
             JSONObject jPings = new JSONObject();
 
             for(int i = 0; i < this.pings.size(); i++){

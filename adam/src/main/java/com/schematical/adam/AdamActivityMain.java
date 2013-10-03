@@ -52,6 +52,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
     public WifiManager wifiManager;
     private AdamWifiManager wifiReceiver;
     private AdamSaveDriver saveDriver;
+    private AdamBluetooth bluetoothDriver;
     private Location mLocation;
     private Location mLastPingLocation;
     public Location mOrigLocation;
@@ -78,6 +79,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
         preview.addView(mPreview);
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mOrientation = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+        bluetoothDriver = new AdamBluetooth(this);
 
         // Acquire a reference to the system Location Manager
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -201,6 +203,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
         ){
             if(mOrigLocation == null){
                 mOrigLocation = mLocation;
+                bluetoothDriver.StartDiscovery();
             }
             mLastPingLocation = mLocation;
             this.allowPing = true;

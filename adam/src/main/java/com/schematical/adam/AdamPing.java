@@ -16,7 +16,7 @@ public class AdamPing {
     public double pingLng;
     public double pingElev;
     public double pingAccuracy;
-    public double pingType;
+    public String pingType;
     public long pingTimestamp;
     AdamPing( double lat, double lng, double elev, double strength, double frequency, double accuracy, long ts){
 
@@ -71,6 +71,7 @@ public class AdamPing {
             jObj.put("pingStrength", this.pingStrength);
             jObj.put("pingFrequency", this.pingFrequency);
             jObj.put("pingTimestamp", this.pingTimestamp);
+            jObj.put("pingType", this.pingType);
         } catch (JSONException e) {
             e.printStackTrace();
             return null;

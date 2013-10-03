@@ -2,7 +2,6 @@ package com.schematical.adam;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -13,19 +12,13 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URL;
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -35,62 +28,38 @@ import java.util.List;
 /**
  * Created by user1a on 10/1/13.
  */
-public class AdamSaveDriver {
-    private AdamActivityMain am;
-    private AdamSaveTask at;
-    public AdamSaveDriver(AdamActivityMain adamActivityMain) {
-        am = adamActivityMain;
+public class AdamSaveTask extends AsyncTask<URL, Integer, Long> {
+    private AdamSaveDriver ad;
+    public AdamSaveTask(AdamSaveDriver nAd) {
+        ad = nAd;
     }
-    public boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) am.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
+
     public void Save(){
 
-        at = new AdamSaveTask(this);
-        at.execute();
+        this.execute();
     }
-    public void CleanUp(){
-        at = null;
-    }
-    public void Load(){
-        LoadFromLocal();
-    }
+    @Override
+    protected Long doInBackground(URL... urls) {
+        if ( ad.isNetworkAvailable()){
+            SaveToServer();
 
-    public void ParseJsonData(JSONObject jObj) throws JSONException{
+        }else{
 
-        Iterator<String> keys = jObj.keys();
-        while(keys.hasNext()){
-            String key = keys.next();
-
-            Object aoData = (JSONObject) jObj.get(key);
-
-            am.UpdateAdamObject(
-                (String)((JSONObject) aoData).get("id"),
-                aoData
-            );
+            SaveToLocal();
         }
-
+        return new Long(0);
     }
-    public void LoadFromLocal(){
-        SharedPreferences pref = am.getApplicationContext().getSharedPreferences("adam_objects", android.content.Context.MODE_PRIVATE );
 
+    public void SaveToLocal(){
+        SharedPreferences pref = ad.getApplicationContext().getSharedPreferences("adam_objects", Context.MODE_PRIVATE );
+        JSONObject data = ad.GetSaveBody();
         SharedPreferences.Editor editor = pref.edit();
-        String json = pref.getString("last_state", "{}");
-        try {
-            JSONObject jObj = new JSONObject(json);
-            ParseJsonData(jObj);
-            //editor.putString("last_state", "{}");
-            editor.commit();
-
-        } catch (JSONException e) {
-            am.SetStatus("Error loading last save state");
-        }
-
-
+        editor.putString("last_state", data.toString());
+        editor.commit();
+        ad.getApplicationContext().SetStatus("Saved Locally");
     }
+
+
     public void SaveToServer(){
         // Create a new HttpClient and Post Header
         HttpClient httpclient = new DefaultHttpClient();
@@ -102,7 +71,7 @@ public class AdamSaveDriver {
             // Add your data
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
             nameValuePairs.add(new BasicNameValuePair("_meta", "12345"));
-            JSONObject data = GetSaveBody();
+            JSONObject data = ad.GetSaveBody();
             nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
@@ -148,30 +117,7 @@ public class AdamSaveDriver {
             e.printStackTrace();
         }*/
     }
-    public AdamActivityMain getApplicationContext(){
-        return (AdamActivityMain) am.getApplicationContext();
-    }
-    public JSONObject GetSaveBody(){
-        try {
-            JSONObject data = new JSONObject();
-            Hashtable<String, AdamObject> aObjects = am.GetAdamObjects();
-            Enumeration<String> aKeys = aObjects.keys();
-            while(aKeys.hasMoreElements()){
-                String key = aKeys.nextElement();
-                AdamObject aObj = aObjects.get(key);
-                data.put(key, aObj.toJSONObject());
-            }
 
-            return data;
-
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            am.SetStatus("Error:" + e.getMessage());
-            return null;
-        }
-
-    }
     // This is called each time you call publishProgress()
     protected void onProgressUpdate(Integer... progress) {
 
@@ -179,7 +125,7 @@ public class AdamSaveDriver {
 
     // This is called when doInBackground() is finished
     protected void onPostExecute(Long result) {
-
+        ad.CleanUp();
     }
 
 }

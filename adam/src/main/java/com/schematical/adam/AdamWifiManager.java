@@ -11,6 +11,7 @@ import java.util.List;
  * Created by user1a on 10/1/13.
  */
 public class AdamWifiManager extends BroadcastReceiver {
+    public static final String TYPE = "Wifi";
     private StringBuilder sb;
     private List<ScanResult> wifiList;
     private AdamActivityMain mC;

@@ -17,6 +17,7 @@ repositories {
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
     compile files('/var/www/adamProject/adam/lib/google-play-services.jar')
+    compile files('/home/user1a/android-studio/sdk/extras/android/support/v13/android-support-v13.jar')
 
 }
 android {
