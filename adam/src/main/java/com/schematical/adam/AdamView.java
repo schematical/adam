@@ -40,6 +40,7 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback {
         super(context);
         mCamera = camera;
         mRadar = new AdamRadar(this);
+        mRadar.MakeFullScreen();
         ah = new AdamHud(this);
 
         focusObjectId = "100 State";
@@ -83,10 +84,10 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback {
             String objId = null;
             while(names.hasMoreElements()) {
                 objId = (String) names.nextElement();
-                if(
+                /*if(
                     (focusObjectId.equals(objId)) ||
                     (focusObjectId == null)
-                ){
+                ){*/
                     AdamObject mObject = (AdamObject) mObjects.get(objId);
 
                     //Find the diff between the Angle were facing and the angle of the object
@@ -100,12 +101,9 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback {
                     double mObjectRelitiveAngle = Math.atan(lngDiff / latDiff);
                     double mObjectAngleDiff = mObjectRelitiveAngle - xAngle;
 
-
-
-
-
                     double bigX = Math.cos(xAngle) * canvas.getWidth();
-                    double bigY = Math.sin(xAngle) * canvas.getWidth();//Only used to determin if we render or not
+                    double bigY = Math.sin(xAngle) * canvas.getWidth();
+                    mObject.SetRadarXY(xAngle, distance);
                     double screenX = bigX + canvas.getWidth()/2;
 
                     //Figure out how wide the angle of view seen by the camera is
@@ -121,7 +119,7 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback {
                         mObject.Draw(canvas);
                     }
 
-                }
+               // }
             }
         }
         ah.Draw(canvas);

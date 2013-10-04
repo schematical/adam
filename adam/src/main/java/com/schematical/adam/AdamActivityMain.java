@@ -169,7 +169,9 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
         super.onResume();
         mSensorManager.registerListener(this, mOrientation, SensorManager.SENSOR_DELAY_NORMAL);
         registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-        bluetoothDriver.StartDiscovery();
+        if(this.mLocation != null){
+            bluetoothDriver.StartDiscovery();
+        }
     }
 
     @Override
@@ -207,6 +209,12 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
                 return true;
             case R.id.action_ping:
                 this.allowPing = true;
+                return true;
+            case R.id.action_save:
+                this.saveDriver.Save();
+                return true;
+            case R.id.action_load:
+                this.saveDriver.Load();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

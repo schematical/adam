@@ -3,9 +3,11 @@ package com.schematical.adam;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.android.gms.internal.am;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -17,7 +19,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +57,8 @@ public class AdamLoadTask extends AsyncTask<URL, Integer, Long> {
         HttpPost httppost = new HttpPost("http://lab.schematical.com/adam/load.php");
         //HttpPost httppost = new HttpPost("http://l-adam.schematical.com/ping.php");
 
-
+        String json = "{}";
+        JSONObject jObj;
         try {
             // Add your data
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
@@ -63,12 +69,33 @@ public class AdamLoadTask extends AsyncTask<URL, Integer, Long> {
 
             // Execute HTTP Post Request
             HttpResponse response = httpclient.execute(httppost);
-
+            HttpEntity httpEntity = response.getEntity();
+            InputStream is = httpEntity.getContent();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    is, "iso-8859-1"), 8);
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+            is.close();
+            json = sb.toString();
         } catch (ClientProtocolException e) {
             // TODO Auto-generated catch block
         } catch (IOException e) {
             // TODO Auto-generated catch block
+        } catch (Exception e) {
+            Log.e("Buffer Error", "Error converting result " + e.toString());
         }
+
+        // try parse the string to a JSON object
+        try {
+            jObj = new JSONObject(json);
+            ad.ParseJsonData(jObj);
+        } catch (JSONException e) {
+            Log.e("JSON Parser", "Error parsing data " + e.toString());
+        }
+
     }
     public void LoadFromLocal(){
         SharedPreferences pref = ad.getAdamActivityMain().getApplicationContext().getSharedPreferences("adam_objects", android.content.Context.MODE_PRIVATE );

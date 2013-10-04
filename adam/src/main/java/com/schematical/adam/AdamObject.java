@@ -6,6 +6,7 @@ import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,6 +36,10 @@ public class AdamObject {
     protected double altutide;
 
     protected List<AdamPing> pings;
+    private double accuracy;
+    public double radarAngle = 0;
+    public double radarDistance = 0;
+
     AdamObject(AdamActivityMain nAm, String nId){
         am = nAm;
         id = nId;
@@ -102,34 +107,45 @@ public class AdamObject {
                     this.lat = (Double)jObj.get("lat");
                     this.lng = (Double)jObj.get("lng");
                 }
-                JSONObject jPings = (JSONObject)jObj.get("pings");
-                Iterator keys = jPings.keys();
-                while(keys.hasNext()){
-                    JSONObject jPingData = (JSONObject) jPings.get((String) keys.next());
-                    double pingLat = (Double)jPingData.get("pingLat");
-                    double pingLng = 0d;
-                    if(jPingData.has("pintLng")){
-                        pingLng = (Double)jPingData.get("pintLng");
-                    }else{
-                        pingLng = (Double)jPingData.get("pingLng");
-                    }
-                    double pingElev = (Integer) jPingData.get("pingElev");
-                    double pingAccuracy =  (Integer) jPingData.get("pingAccuracy");
-                    double pingStrength = (Integer)   jPingData.get("pingStrength");
-                    double pingFrequency = (Integer)   jPingData.get("pingFrequency");
-                    long pingTimestamp = (Long) jPingData.get("pingTimestamp");
-                    AdamPing objPing = new AdamPing(
-                        pingLat,
-                        pingLng,
-                        pingElev,
-                        pingStrength,
-                        pingFrequency,
-                        pingAccuracy,
-                        pingTimestamp
-                    );
-                    pings.add(objPing);
-                }
+                if(jObj.has("target")){
 
+                    if(!jObj.get("target").equals(null)){
+                        JSONObject target = (JSONObject)jObj.get("target");
+                        this.lat = (Double)target.get("lat");
+                        this.lng = (Double)target.get("lng");
+                        this.accuracy = (Double) target.get("accuracy");
+                    }
+                }
+                Object qPing = jObj.get("pings");
+                if(qPing instanceof JSONObject){
+                    JSONObject jPings = (JSONObject) qPing;
+                    Iterator keys = jPings.keys();
+                    while(keys.hasNext()){
+                        JSONObject jPingData = (JSONObject) jPings.get((String) keys.next());
+                        double pingLat = (Double)jPingData.get("pingLat");
+                        double pingLng = 0d;
+                        if(jPingData.has("pintLng")){
+                            pingLng = (Double)jPingData.get("pintLng");
+                        }else{
+                            pingLng = (Double)jPingData.get("pingLng");
+                        }
+                        double pingElev = (Integer) jPingData.get("pingElev");
+                        double pingAccuracy =  (Integer) jPingData.get("pingAccuracy");
+                        double pingStrength = (Integer)   jPingData.get("pingStrength");
+                        double pingFrequency = (Integer)   jPingData.get("pingFrequency");
+                        long pingTimestamp = (Long) jPingData.get("pingTimestamp");
+                        AdamPing objPing = new AdamPing(
+                            pingLat,
+                            pingLng,
+                            pingElev,
+                            pingStrength,
+                            pingFrequency,
+                            pingAccuracy,
+                            pingTimestamp
+                        );
+                        pings.add(objPing);
+                    }
+                }
             }catch(JSONException e){
                 Log.d("adam", "ADAMERROR:!!!! " + e.getMessage());
                 e.printStackTrace();
@@ -168,67 +184,11 @@ public class AdamObject {
                         date.getTime()
                 );
                 pings.add(ap);
-                UpdateLatLng();
+
             }
         }
     }
-    public void UpdateLatLng(){
-        if(pings.size() > 1){
-            AdamPing p1 = null;
-            AdamPing p2 = null;
-            double a = 0;//Ping of p1
-            double b = 0;//Ping of p2
-            double c = 0;//distance between p1 and p2
-            double aAngle = 0;
-            double bAngle = 0;
-            double cTX = 9999;
-            double cTY = 9999;
-            double guessCt = 0;
-            for(int i = 0; i < pings.size(); i++){
-                p2 = p1;
-                p1 = pings.get(i);
-                if(p2 != null){
 
-                    a = (100 - p1.pingStrength) * AdamPing.METERS_DMB;
-                    b = (100 - p2.pingStrength) * AdamPing.METERS_DMB;
-                    c = p1.DistanceFrom(p2);//In Meters
-                    aAngle = Math.acos(
-                            Math.pow(a,2) + Math.pow(b,2) + Math.pow(c,2) /
-                            -2 * b * c
-                    );
-
-                    bAngle = Math.acos(
-                            Math.pow(b,2) + Math.pow(a,2) + Math.pow(c,2) /
-                                    -2 * a * c
-                    );
-                    double aAngleRelGround = p1.AngleInRelationTo(p2);
-                    //Generate 2 estimates
-                    double c1Y = Math.sin(aAngleRelGround + aAngle) * a;
-                    double c1X = Math.cos(aAngleRelGround + aAngle) * a;
-                    double c2Y = Math.sin(aAngleRelGround - aAngle) * a;
-                    double c2X = Math.cos(aAngleRelGround - aAngle) * a;
-                    if(cTX == 9999){
-                        cTX = c1X;
-                        cTY = c1Y;
-                    }else{
-                        cTX += c1X;
-                        cTY += c1Y;
-                    }
-                    cTX += c2X;
-                    cTY += c2Y;
-                    guessCt += 2;
-                }
-
-
-            }
-            this.lat = cTX / guessCt;
-            this.lng = cTY / guessCt;
-        }else{
-            this.lat = pings.get(0).pingLat;
-            this.lng = pings.get(0).pingLng;
-        }
-
-    }
 
     public JSONObject toJSONObject() {
         JSONObject jObj = new JSONObject();
@@ -256,5 +216,23 @@ public class AdamObject {
     }
     public void ClearPings(){
         this.pings = new ArrayList<AdamPing>();
+    }
+
+    public void SetRadarXY(double nRadarAngle, double nDistance) {
+        this.radarAngle = nRadarAngle;
+        this.radarDistance = nDistance;
+    }
+    public void DrawRadar(Canvas canvas, AdamRadar adamRadar, int nWidth, int nHeight){
+        paint.setTextSize(20);
+        double bigX  = Math.cos(this.radarAngle) * this.radarDistance / AdamRadar.DEFAULT_MAX_DIST * (nWidth/2) ;
+        double bigY = Math.sin(this.radarAngle)  * this.radarDistance / AdamRadar.DEFAULT_MAX_DIST * (nHeight/2);
+
+        String sDesc = this.alias + "(" + Double.toString(this.lat) + "," + Double.toString(this.lng) + ")";
+        canvas.drawText(
+            sDesc,
+            (float) bigX + canvas.getWidth() / 2,
+            (float)bigY + canvas.getHeight() / 2,
+            paint
+        );
     }
 }

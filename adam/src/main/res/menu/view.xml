@@ -7,5 +7,12 @@
         android:title="@string/action_ping"
         android:orderInCategory="100"
         android:showAsAction="never" />
-
+    <item android:id="@+id/action_load"
+        android:title="@string/action_load"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+    <item android:id="@+id/action_save"
+        android:title="@string/action_save"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
 </menu>
