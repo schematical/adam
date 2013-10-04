@@ -30,7 +30,7 @@ public class AdamWifiManager extends BroadcastReceiver {
 
                 ScanResult sr = wifiList.get(i);
                 mC.UpdateAdamObject(
-                        sr.SSID,
+                        sr.BSSID,
                         sr
                 );
             }

@@ -24,8 +24,10 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.location.LocationManager;
+
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -59,6 +61,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
     public boolean allowPing = false;
     public int pingCt = 0;
 
+
     public AdamActivityMain() {
     }
 
@@ -89,7 +92,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
         if(this.IsWifiConnected()){
-            this.SetStatus("Cannot scan while connected to wifi");
+            //this.SetStatus("Cannot scan while connected to wifi");
             saveDriver.Save();
         }else{
             wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
@@ -166,7 +169,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
         super.onResume();
         mSensorManager.registerListener(this, mOrientation, SensorManager.SENSOR_DELAY_NORMAL);
         registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-        super.onPause();
+        bluetoothDriver.StartDiscovery();
     }
 
     @Override
@@ -174,6 +177,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
         super.onPause();
         unregisterReceiver(wifiReceiver);
         mSensorManager.unregisterListener(this);
+        bluetoothDriver.UnregisterListener();
     }
     /** A safe way to get an instance of the Camera object. */
     public static Camera getCameraInstance(){
@@ -194,7 +198,20 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
         getMenuInflater().inflate(R.menu.view, menu);
         return true;
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_settings:
 
+                return true;
+            case R.id.action_ping:
+                this.allowPing = true;
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
     public void onLocationChanged(Location location) {
         mLocation = location;
         if(

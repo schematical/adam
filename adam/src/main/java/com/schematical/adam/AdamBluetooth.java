@@ -20,6 +20,9 @@ public class AdamBluetooth extends BroadcastReceiver{
     AdamActivityMain am;
     BluetoothAdapter mBluetoothAdapter;
     Hashtable<String, AdamBluetoothScanResult> aScanResults;
+    private IntentFilter discoveryFinished;
+    private IntentFilter actionFoundFilter;
+
     AdamBluetooth(AdamActivityMain nAm){
         am = nAm;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -31,25 +34,26 @@ public class AdamBluetooth extends BroadcastReceiver{
 
 
 
-        if (mBluetoothAdapter.isEnabled()) {
-            // Register the BroadcastReceiver
-            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            am.registerReceiver(this, filter); // Don't forget to unregister during onDestroy
 
-            IntentFilter filter2 = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-            am.registerReceiver(this, filter);
-
-
-
-
-        }
     }
     public void StartDiscovery(){
+        if (mBluetoothAdapter.isEnabled()) {
+            // Register the BroadcastReceiver
+            actionFoundFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            am.registerReceiver(this, actionFoundFilter); // Don't forget to unregister during onDestroy
+
+            discoveryFinished = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+            am.registerReceiver(this, discoveryFinished);
+        }
         mBluetoothAdapter.startDiscovery();
+    }
+    public void UnregisterListener(){
+       mBluetoothAdapter.cancelDiscovery();
+       am.unregisterReceiver(this);
+
     }
     @Override
     public void onReceive(Context context, Intent intent) {
-
         String action = intent.getAction();
         // When discovery finds a device
         if (BluetoothDevice.ACTION_FOUND.equals(action)) {

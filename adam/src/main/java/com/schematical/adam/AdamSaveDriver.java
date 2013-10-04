@@ -38,6 +38,7 @@ import java.util.List;
 public class AdamSaveDriver {
     private AdamActivityMain am;
     private AdamSaveTask at;
+    private AdamLoadTask alt;
     public AdamSaveDriver(AdamActivityMain adamActivityMain) {
         am = adamActivityMain;
     }
@@ -56,7 +57,8 @@ public class AdamSaveDriver {
         at = null;
     }
     public void Load(){
-        LoadFromLocal();
+        alt = new AdamLoadTask(this);
+        alt.execute();
     }
 
     public void ParseJsonData(JSONObject jObj) throws JSONException{
@@ -74,23 +76,7 @@ public class AdamSaveDriver {
         }
 
     }
-    public void LoadFromLocal(){
-        SharedPreferences pref = am.getApplicationContext().getSharedPreferences("adam_objects", android.content.Context.MODE_PRIVATE );
 
-        SharedPreferences.Editor editor = pref.edit();
-        String json = pref.getString("last_state", "{}");
-        try {
-            JSONObject jObj = new JSONObject(json);
-            ParseJsonData(jObj);
-            //editor.putString("last_state", "{}");
-            editor.commit();
-
-        } catch (JSONException e) {
-            am.SetStatus("Error loading last save state");
-        }
-
-
-    }
     public void SaveToServer(){
         // Create a new HttpClient and Post Header
         HttpClient httpclient = new DefaultHttpClient();
@@ -148,8 +134,8 @@ public class AdamSaveDriver {
             e.printStackTrace();
         }*/
     }
-    public AdamActivityMain getApplicationContext(){
-        return (AdamActivityMain) am.getApplicationContext();
+    public AdamActivityMain getAdamActivityMain(){
+        return  am;
     }
     public JSONObject GetSaveBody(){
         try {

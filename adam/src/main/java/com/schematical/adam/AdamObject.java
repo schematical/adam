@@ -155,6 +155,7 @@ public class AdamObject {
         if(data instanceof ScanResult){
             //Track in a list of pings
             ScanResult sr = (ScanResult) data;
+            this.alias = sr.SSID;
             Location objLocation = am.GetLocation();
             if(objLocation != null){
                 AdamPing ap = new AdamPing(

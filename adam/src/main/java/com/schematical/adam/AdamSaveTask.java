@@ -51,12 +51,12 @@ public class AdamSaveTask extends AsyncTask<URL, Integer, Long> {
     }
 
     public void SaveToLocal(){
-        SharedPreferences pref = ad.getApplicationContext().getSharedPreferences("adam_objects", Context.MODE_PRIVATE );
+        SharedPreferences pref = ad.getAdamActivityMain().getApplicationContext().getSharedPreferences("adam_objects", Context.MODE_PRIVATE );
         JSONObject data = ad.GetSaveBody();
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("last_state", data.toString());
         editor.commit();
-        ad.getApplicationContext().SetStatus("Saved Locally");
+        ad.getAdamActivityMain().SetStatus("Saved Locally");
     }
 
 
