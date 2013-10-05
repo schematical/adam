@@ -27,9 +27,9 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
     private Camera mCamera;
     private Canvas mCanvas;
 
-    private double xAngle;
-    private double yAngle;
-    private double zAngle;
+    public double xAngle;
+    public double yAngle;
+    public double zAngle;
     private AdamRadar mRadar;
 
 
@@ -112,43 +112,44 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
             String objId = null;
             while(names.hasMoreElements()) {
                 objId = (String) names.nextElement();
-                if(
-                    (focusObjectId.equals(objId)) ||
-                    (focusObjectId == null)
-                ){
-                    AdamObject mObject = (AdamObject) mObjects.get(objId);
 
-                    //Find the diff between the Angle were facing and the angle of the object
+                AdamObject mObject = (AdamObject) mObjects.get(objId);
 
-                    float x = 0;
-                    float y = 0;
-                    if(mObject.GetLng() != 0){
-                        Location mObjLoc = mObject.GetLocation();
-                        double distance = mLocation.distanceTo(mObjLoc);
-                        double mObjectRelitiveAngle = Math.atan(mLocation.getLongitude() - mObjLoc.getLongitude() / (mLocation.getLatitude() - mObjLoc.getLatitude()));
+                //Find the diff between the Angle were facing and the angle of the object
 
-                        double mObjectAngleDiff = mObjectRelitiveAngle + xAngle;
+                if(mObject.GetLng() != 0){
+                    Location mObjLoc = mObject.GetLocation();
+                    double distance = mLocation.distanceTo(mObjLoc);
+                    double mObjectRelitiveAngle = (mLocation.getLongitude() - mObjLoc.getLongitude() / (mLocation.getLatitude() - mObjLoc.getLatitude()));
 
-                        double bigX = Math.cos(mObjectAngleDiff + Math.PI) * canvas.getWidth();
-                        double bigY = Math.sin(mObjectAngleDiff + Math.PI) * canvas.getHeight();
-                        mObject.Radar().SetRadarXY(mObjectAngleDiff, distance);
-                        double screenX = bigX + canvas.getWidth()/2;
-                        double screenY = Math.cos(zAngle) * canvas.getHeight();
-                        //Figure out how wide the angle of view seen by the camera is
-                        double viewWidth = Math.PI/2;
-                        //First determin if it is in the view range
+                    double mObjectAngleDiff = mObjectRelitiveAngle + xAngle;
+
+                    double bigX = Math.cos(mObjectAngleDiff + Math.PI) * canvas.getWidth();
+                    double bigY = Math.sin(mObjectAngleDiff + Math.PI) * canvas.getHeight();
+                    mObject.Radar().SetRadarXY(mObjectAngleDiff, distance);
+                    double screenX = bigX + canvas.getWidth()/2;
+                    double screenY = Math.sin(yAngle) * canvas.getHeight();
+                    //Figure out how wide the angle of view seen by the camera is
+                    double viewWidth = Math.PI/2;
+                    //First determin if it is in the view range
 
 
-                       if(bigY > 0 ){
-                            AdamObjectHud objHud = mObject.Hud();
-                            objHud.SetGoalXY(
-                                (int) Math.round(screenX),
-                                (int) Math.round(screenY)
-                            );
-                           objHud.Draw(canvas);
-                        }
+                   if(bigY > 0 ){
+                        AdamObjectHud objHud = mObject.Hud();
+                        objHud.SetGoalXY(
+                            (int) Math.round(screenX),
+                            (int) Math.round(screenY)
+                        );
+                       objHud.Draw(canvas);
+                    }
+                    if(
+                        (focusObjectId.equals(objId)) ||
+                        (focusObjectId == null)
+                    ){
+                        Log.d("adam", "Deg: " + AdamHelper.To360Degrees(mObjectAngleDiff));
                     }
                 }
+
             }
         }
         ah.Draw(canvas);

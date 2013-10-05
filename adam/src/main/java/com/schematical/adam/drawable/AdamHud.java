@@ -10,28 +10,29 @@ import com.schematical.adam.AdamView;
 /**
  * Created by user1a on 10/1/13.
  */
-public class AdamHud {
-    private AdamView av;
-    private Paint paint;
-
-    public AdamHud(AdamView nAv){
-        av = nAv;
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(0xff00ff00);
-        paint.setTextSize(40);
+public class AdamHud extends AdamDrawable{
 
 
+    public AdamHud(AdamView nAv) {
+        super(nAv);
     }
+
+
     public void Draw(Canvas canvas){
         AdamActivityMain am = (AdamActivityMain) av.getContext();
 
         canvas.drawText(
                 am.GetStatus(),
                 100,
-                20,
+                40,
                 paint
         );
-
+        canvas.drawText(
+                av.yAngle + " / " +  av.zAngle,
+                100,
+                canvas.getHeight() - 150,
+                paint
+        );
         Location oLocation = am.GetLocation();
         String msg = "";
         if(oLocation != null){
