@@ -120,7 +120,10 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
                 if(mObject.GetLng() != 0){
                     Location mObjLoc = mObject.GetLocation();
                     double distance = mLocation.distanceTo(mObjLoc);
-                    double mObjectRelitiveAngle = (mLocation.getLongitude() - mObjLoc.getLongitude() / (mLocation.getLatitude() - mObjLoc.getLatitude()));
+                    double baring = mLocation.bearingTo(mObjLoc);
+                    double mObjectRelitiveAngle = (baring/180) * Math.PI;
+
+                    //double mObjectRelitiveAngle = Math.atan(mLocation.getLongitude() - mObjLoc.getLongitude() / (mLocation.getLatitude() - mObjLoc.getLatitude()));
 
                     double mObjectAngleDiff = mObjectRelitiveAngle + xAngle;
 
@@ -128,7 +131,7 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
                     double bigY = Math.sin(mObjectAngleDiff + Math.PI) * canvas.getHeight();
                     mObject.Radar().SetRadarXY(mObjectAngleDiff, distance);
                     double screenX = bigX + canvas.getWidth()/2;
-                    double screenY = Math.sin(yAngle) * canvas.getHeight();
+                    double screenY = canvas.getHeight()/2; //Math.sin(yAngle) * canvas.getHeight();
                     //Figure out how wide the angle of view seen by the camera is
                     double viewWidth = Math.PI/2;
                     //First determin if it is in the view range
@@ -146,7 +149,8 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
                         (focusObjectId.equals(objId)) ||
                         (focusObjectId == null)
                     ){
-                        Log.d("adam", "Deg: " + AdamHelper.To360Degrees(mObjectAngleDiff));
+                        Log.d("adam", "Baring: " + mLocation.bearingTo(mObjLoc));
+                        Log.d("adam", "Deg: " + AdamHelper.To360Degrees(mObjectAngleDiff) + " - rel:" + AdamHelper.To360Degrees(mObjectRelitiveAngle) + " - x:" + AdamHelper.To360Degrees(mObjectRelitiveAngle));
                     }
                 }
 
