@@ -10,6 +10,7 @@ import android.view.*;
 
 import com.schematical.adam.drawable.AdamDrawable;
 import com.schematical.adam.drawable.AdamHud;
+import com.schematical.adam.drawable.AdamObjectHud;
 import com.schematical.adam.drawable.AdamRadar;
 
 import java.io.IOException;
@@ -41,7 +42,8 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
         this.setOnTouchListener(this);
         mCamera = camera;
         mRadar = new AdamRadar(this);
-        //mRadar.MakeFullScreen();
+        mRadar.setBottom(20);
+        mRadar.setRight(20);
         ah = new AdamHud(this);
 
         focusObjectId = "100 State";
@@ -58,6 +60,23 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
     }
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+        float x = event.getX();
+        float y = event.getY();
+        Enumeration<String> keys = controls.keys();
+
+        while(keys.hasMoreElements()){
+            String key = keys.nextElement();
+            AdamDrawable ad = (AdamDrawable) controls.get(key);
+            if(
+                (ad.getX() < x) &&
+                (ad.getX() + ad.getWidth() > x) &&
+                (ad.getY() < y) &&
+                (ad.getY() + ad.getHeight() > y)
+            ){
+                ad.onTouch(v, event);
+            }
+
+        }
         return false;
     }
 
@@ -84,20 +103,19 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
 
         AdamActivityMain am = ((AdamActivityMain) getContext());
 
-        Location mLoctaion = am.GetLocation();
-        if(mLoctaion != null){
-            double mLat = mLoctaion.getLatitude();
-            double mLng = mLoctaion.getLongitude();
+        Location mLocation = am.GetLocation();
+        if(mLocation != null){
+
 
             Hashtable<String, AdamObject> mObjects = am.GetAdamObjects();
             Enumeration names = mObjects.keys();
             String objId = null;
             while(names.hasMoreElements()) {
                 objId = (String) names.nextElement();
-                /*if(
+                if(
                     (focusObjectId.equals(objId)) ||
                     (focusObjectId == null)
-                ){*/
+                ){
                     AdamObject mObject = (AdamObject) mObjects.get(objId);
 
                     //Find the diff between the Angle were facing and the angle of the object
@@ -105,35 +123,31 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
                     float x = 0;
                     float y = 0;
                     if(mObject.GetLng() != 0){
+                        Location mObjLoc = mObject.GetLocation();
+                        double distance = mLocation.distanceTo(mObjLoc);
+                        double mObjectRelitiveAngle = Math.atan(mLocation.getLongitude() - mObjLoc.getLongitude() / (mLocation.getLatitude() - mObjLoc.getLatitude()));
 
-                        double distance = AdamLocation.distFrom(
-                                (float) mLat,
-                                (float) mLng,
-                                (float) mObject.GetLat(),
-                                (float) mObject.GetLng()
-                        );
-                        double mObjectRelitiveAngle = mLng - mObject.GetLng() / (mLat - mObject.GetLat());
-                        
                         double mObjectAngleDiff = mObjectRelitiveAngle + xAngle;
 
-                        double bigX = Math.cos(mObjectAngleDiff) * canvas.getWidth();
-                        double bigY = Math.sin(mObjectAngleDiff) * canvas.getHeight();
-                        mObject.SetRadarXY(mObjectAngleDiff, distance);
+                        double bigX = Math.cos(mObjectAngleDiff + Math.PI) * canvas.getWidth();
+                        double bigY = Math.sin(mObjectAngleDiff + Math.PI) * canvas.getHeight();
+                        mObject.Radar().SetRadarXY(mObjectAngleDiff, distance);
                         double screenX = bigX + canvas.getWidth()/2;
-
+                        double screenY = Math.cos(zAngle) * canvas.getHeight();
                         //Figure out how wide the angle of view seen by the camera is
                         double viewWidth = Math.PI/2;
                         //First determin if it is in the view range
 
 
                        if(bigY > 0 ){
-                            mObject.SetGoalXY(
+                            AdamObjectHud objHud = mObject.Hud();
+                            objHud.SetGoalXY(
                                 (int) Math.round(screenX),
-                                Math.round(canvas.getHeight()/2)
+                                (int) Math.round(screenY)
                             );
-                            mObject.Draw(canvas);
+                           objHud.Draw(canvas);
                         }
-
+                    }
                 }
             }
         }
@@ -190,6 +204,9 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
 
 
     public void AddChildControl(AdamDrawable adamDrawable) {
-        controls.put(adamDrawable.GetId(), adamDrawable);
+        if(adamDrawable.getId() == null){
+            adamDrawable.setId("c" + Integer.toString(controls.size()));
+        }
+        controls.put(adamDrawable.getId(), adamDrawable);
     }
 }

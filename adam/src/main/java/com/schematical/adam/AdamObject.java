@@ -2,10 +2,13 @@ package com.schematical.adam;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.util.Log;
 
+import com.schematical.adam.drawable.AdamObjectHud;
+import com.schematical.adam.drawable.AdamObjectRadar;
 import com.schematical.adam.drawable.AdamRadar;
 
 import org.json.JSONException;
@@ -21,14 +24,15 @@ import java.util.List;
 public class AdamObject {
 
     protected AdamActivityMain am;
-    private final Paint paint;
+
     protected String id;
     protected String aId;
+    protected AdamObjectRadar mRadar;
+    protected AdamObjectHud mHud;
+
+
     protected String alias;
-    protected int goalX = 0;
-    protected int goalY = 0;
-    protected int currX = 0;
-    protected int currY = 0;
+
 
     protected double lat;
     protected double lng;
@@ -44,49 +48,22 @@ public class AdamObject {
         id = nId;
         pings  = new ArrayList<AdamPing>();
 
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(0xff00ff00);
-        paint.setTextSize(50);
+
+    }
+    public AdamObjectHud Hud(){
+        if(this.mHud == null){
+            this.mHud = new AdamObjectHud(am.GetView(), this);
+        }
+        return mHud;
     }
     public String GetId(){
         return id;
     }
     public boolean IsFocused(){
-        return am.mPreview.focusObjectId.equals(this.id);
+        return am.mView.focusObjectId.equals(this.id);
     }
-    public void Draw(Canvas canvas){
-        Location newLocation = new Location("gps");
-        Location oLocation = am.GetLocation();
-        newLocation.setLatitude(this.lat);
-        newLocation.setLongitude(this.lng);
-        newLocation.setAltitude(oLocation.getAltitude());
-
-        newLocation.setAccuracy(3.0f);
-        float cDist = oLocation.distanceTo(newLocation);
-        currX = Math.round(currX + goalX)/2;
-        currY = Math.round(currY + goalY)/2;
-        paint.setTextSize(Math.round(40 - (cDist/4)));
-        canvas.drawText(
-                this.id,
-                currX,
-                currY,
-                paint
-        );
-        //if(IsFocused()){
 
 
-            canvas.drawText(
-                    "Dist:" + Float.toString(cDist),
-                    currX,
-                    currY + 45,
-                    paint
-            );
-        //}
-    }
-    public void SetGoalXY(int nGoalX, int nGoalY){
-        goalX = nGoalX;
-        goalY = nGoalY;
-    }
     public double GetLat(){
         return lat;
     }
@@ -219,25 +196,23 @@ public class AdamObject {
     public void ClearPings(){
         this.pings = new ArrayList<AdamPing>();
     }
-
-    public void SetRadarXY(double nRadarAngle, double nDistance) {
-        this.radarAngle = nRadarAngle;
-        this.radarDistance = nDistance;
+    public String GetAlias() {
+        return alias;
     }
-    public void DrawRadar(Canvas canvas, AdamRadar adamRadar, int nWidth, int nHeight){
-        paint.setTextSize(20);
-        if(this.lat != 0){
-            double radius = this.radarDistance / AdamRadar.DEFAULT_MAX_DIST * (nWidth/2);
-            double bigX  = Math.cos(this.radarAngle) *  radius;
-            double bigY = Math.sin(this.radarAngle)  * radius;//this.radarDistance / AdamRadar.DEFAULT_MAX_DIST * (nHeight/2);
 
-            String sDesc = this.alias + "(" + Double.toString(this.lat) + "," + Double.toString(this.lng) + ")";
-            canvas.drawText(
-                sDesc,
-                (float) bigX + canvas.getWidth() / 2,
-                (float)bigY + canvas.getHeight() / 2,
-                paint
-            );
+
+    public AdamObjectRadar Radar() {
+        if(mRadar == null){
+            this.mRadar = new AdamObjectRadar(am.GetView(), this);
         }
+        return mRadar;
+    }
+    public Location GetLocation(){
+        Location nLocation = new Location("gps");
+        nLocation.setAccuracy((int)this.accuracy);
+        nLocation.setLatitude(this.lat);
+        nLocation.setLongitude(this.lng);
+        nLocation.setAltitude(this.altutide);
+        return nLocation;
     }
 }

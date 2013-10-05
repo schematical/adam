@@ -25,9 +25,8 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
     protected double measure_ct = 0;
 
     protected AdamActivityMain am;
-    private Location mLocation;
-    private Location mLastPingLocation;
-    public Location mOrigLocation;
+
+
 
     public AdamLocation(AdamActivityMain adamActivityMain) {
         am = adamActivityMain;
@@ -41,13 +40,16 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
 
 
     public Location GetLocation(){
-        mLocation = new Location("gps");
-        mLocation.setLatitude(this.lat_t / this.weight_t);
-        mLocation.setLongitude(this.lng_t / this.weight_t);
-        mLocation.setAltitude(this.altitude_t/this.weight_t);
-        mLocation.setAccuracy(Math.round(1/(this.weight_t/this.measure_ct)));
+        if(this.lat_t ==0){
+            return null;
+        }
+        Location nLocation = new Location("gps");
+        nLocation.setLatitude(this.lat_t / this.weight_t);
+        nLocation.setLongitude(this.lng_t / this.weight_t);
+        nLocation.setAltitude(this.altitude_t/this.weight_t);
+        nLocation.setAccuracy(Math.round(1/(this.weight_t/this.measure_ct)));
 
-        return mLocation;
+        return nLocation;
     }
 
 
@@ -101,8 +103,11 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
         return new Float(dist * meterConversion).floatValue();
     }
     public void onLocationChanged(Location location) {
-        mLocation = location;
 
+        Location oLoc = this.GetLocation();
+        if(oLoc != null){
+            Log.d("adam", "Jumping:" + Float.toString(oLoc.distanceTo(location)));
+        }
 
         double weight = 1/location.getAccuracy();
         this.lat_t += location.getLatitude() * weight;
@@ -110,20 +115,8 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
         this.altitude_t += location.getAltitude() * weight;
         this.weight_t += weight;
         this.measure_ct += 1;
-        //this.accuracy_t += location.getAccuracy();
-
-
-        if(
-                (mLastPingLocation == null) ||
-                (mLastPingLocation.distanceTo(mLocation) > mLocation.getAccuracy() * (1.5))
-        ){
-            if(mOrigLocation == null){
-                mOrigLocation = mLocation;
-                am.bluetoothDriver.StartDiscovery();
-            }
-            mLastPingLocation = mLocation;
-            am.allowPing = true;
-
+        if(oLoc != null){
+            Log.d("adam", "Smothed Jump:" + Float.toString(oLoc.distanceTo(this.GetLocation())));
         }
 
 

@@ -81,11 +81,11 @@ public class AdamLoadTask extends AsyncTask<URL, Integer, Long> {
             is.close();
             json = sb.toString();
         } catch (ClientProtocolException e) {
-            // TODO Auto-generated catch block
+            Log.e("ClientProtocolException Error", "Error converting result " + e.toString());
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+            Log.e("IOException Error", "Error converting result " + e.toString());
         } catch (Exception e) {
-            Log.e("Buffer Error", "Error converting result " + e.toString());
+            Log.e("Exception Error", "Error converting result " + e.toString());
         }
 
         // try parse the string to a JSON object

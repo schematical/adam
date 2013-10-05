@@ -20,6 +20,7 @@ public class AdamHud {
         paint.setColor(0xff00ff00);
         paint.setTextSize(40);
 
+
     }
     public void Draw(Canvas canvas){
         AdamActivityMain am = (AdamActivityMain) av.getContext();
@@ -27,26 +28,10 @@ public class AdamHud {
         canvas.drawText(
                 am.GetStatus(),
                 100,
-                40,
+                20,
                 paint
         );
-       /* String msg = "XYZ: " + Double.toString(av.xAngle) + "- Y:" + Double.toString(av.yAngle) + " - Z:" + Double.toString(av.zAngle);
-        canvas.drawText(
-                msg,
-                100,
-                100,
-                paint
-        );*/
 
-
-        /*
-        msg = "Diff Angle: " + Double.toString(mObjectAngleDiff) + "   - Relitive Angle: " + Double.toString(mObjectRelitiveAngle);
-        canvas.drawText(
-                msg,
-                100,
-                200,
-                paint
-        );*/
         Location oLocation = am.GetLocation();
         String msg = "";
         if(oLocation != null){

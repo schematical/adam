@@ -2,6 +2,8 @@ package com.schematical.adam.drawable;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.view.MotionEvent;
+import android.view.View;
 
 import com.schematical.adam.AdamActivityMain;
 import com.schematical.adam.AdamObject;
@@ -16,35 +18,44 @@ import java.util.Hashtable;
  */
 public class AdamRadar extends AdamDrawable {
     public static final double DEFAULT_MAX_DIST = 100;
+
+
     protected boolean blnFullScreen = false;
     protected int orig_height = 0;
     protected int orig_width = 0;
     public AdamRadar(AdamView nAv) {
         super(nAv);
+
     }
 
-    public void MakeFullScreen(){
+    public void ToggleFullScreen(){
         if(this.blnFullScreen){
-            orig_width = av.GetCanvas().getWidth()- 2 * padding;
-            orig_height = av.GetCanvas().getHeight()- 2 * padding;
+            this.blnFullScreen = false;
+            width = orig_width;
+            height = orig_height;
         }else{
             this.blnFullScreen = true;
             orig_height = this.height;
             orig_width = this.width;
-
-
-
+            width = av.GetCanvas().getHeight()- (2 * padding);
+            height = av.GetCanvas().getHeight() - (2 * padding);
         }
     }
 
     public void Draw(Canvas canvas, double xAngle, double yAngle, double zAngle){
-        int nWidth = width;
-        int nHeight = height;
 
 
 
-        int middleX = (canvas.getWidth()- padding) - nWidth/2 ;
-        int middleY = (canvas.getHeight() - padding) - nHeight/2;
+
+        int middleX = this.getX() + width/2 ;
+        int middleY = this.getY() + width/2;
+
+        canvas.drawCircle(
+                middleX,
+                middleY,
+                height/2,
+                bg_paint
+        );
 
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawCircle(
@@ -57,20 +68,21 @@ public class AdamRadar extends AdamDrawable {
         canvas.drawCircle(
                 middleX,
                 middleY,
-                nHeight/2,
+                height/2,
                 paint
         );
 
         paint.setStyle(Paint.Style.FILL);
+
+
         canvas.drawText(
                 "N",
-                Math.round(middleX + Math.cos(xAngle) * nWidth/2),
-                Math.round(middleY + Math.sin(xAngle) * nHeight/2),
+                Math.round(middleX + Math.cos(xAngle) * width/2),
+                Math.round(middleY + Math.sin(xAngle) * height/2),
                 paint
         );
-        if(this.blnFullScreen){
-            DrawAdamObjects(canvas, nWidth, nHeight);
-        }
+        DrawAdamObjects(canvas, width, height);
+
 
     }
     public void DrawAdamObjects(Canvas canvas, int nWidth, int nHeight){
@@ -79,9 +91,17 @@ public class AdamRadar extends AdamDrawable {
         while(keys.hasMoreElements()){
             String key = keys.nextElement();
             AdamObject ao = (AdamObject) aObjects.get(key);
-            ao.DrawRadar(canvas, this, nWidth, nHeight);
+            ao.Radar().Draw(canvas, this);
+
         }
     }
+    public boolean isFullScreen() {
+        return blnFullScreen;
+    }
+    public void onTouch(View v, MotionEvent event) {
+        this.ToggleFullScreen();
+    }
+
 
 
 }

@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -42,7 +43,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
 
 
     private Camera mCamera;
-    public AdamView mPreview;
+    public AdamView mView;
 
     private Paint paint;
 
@@ -50,7 +51,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
     private Sensor mOrientation;
     private String status;
 
-    public WifiManager wifiManager;
+
     private AdamWifiManager wifiReceiver;
     private AdamSaveDriver saveDriver;
     public AdamBluetooth bluetoothDriver;
@@ -68,43 +69,33 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Typeface font = Typeface.createFromAsset( getAssets(), "fontawesome-webfont.ttf" );
 
+        
         status = "Uninitialized";
         // Create an instance of Camera
         mCamera = getCameraInstance();
         saveDriver = new AdamSaveDriver(this);
         saveDriver.Load();
         // Create our Preview view and set it as the content of our activity.
-        mPreview = new AdamView(this, mCamera);
+        mView = new AdamView(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.addView(mPreview);
+        preview.addView(mView);
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mOrientation = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         bluetoothDriver = new AdamBluetooth(this);
 
         aLocation = new AdamLocation(this);
-
-        if(this.IsWifiConnected()){
+        wifiReceiver  = new AdamWifiManager(this);
+        wifiReceiver.StartScan();
+        if(wifiReceiver.IsWifiConnected()){
             //this.SetStatus("Cannot scan while connected to wifi");
             saveDriver.Save();
-        }else{
-            wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
-
-            wifiReceiver  = new AdamWifiManager(this);
-            registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-            wifiManager.startScan();
         }
 
-    }
-    public boolean IsWifiConnected(){
-        ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-        if (mWifi.isConnected()) {
-            return true;
-        }
-        return false;
     }
+
     public String GetStatus(){
         return status;
     }
@@ -143,13 +134,14 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
         double yAngle = (event.values[1]/180)  * Math.PI;// * Math.PI / 2;
         double zAngle = (event.values[2]/180) * Math.PI;// * Math.PI / 2;
 
-        mPreview.UpdateOrientation(xAngle, yAngle, zAngle);
+        mView.UpdateOrientation(xAngle, yAngle, zAngle);
     }
     @Override
     protected void onResume() {
         super.onResume();
         mSensorManager.registerListener(this, mOrientation, SensorManager.SENSOR_DELAY_NORMAL);
-        registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+
+        wifiReceiver.StartScan();
         if(GetLocation() != null){
             bluetoothDriver.StartDiscovery();
         }
@@ -202,7 +194,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
         }
     }
 
-
-
-
+    public AdamView GetView() {
+        return mView;
+    }
 }
