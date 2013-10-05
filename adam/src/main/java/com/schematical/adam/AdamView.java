@@ -1,17 +1,16 @@
 package com.schematical.adam;
 
 import android.content.Context;
-import android.graphics.AvoidXfermode;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.hardware.Camera;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.location.Location;
 import android.util.Log;
 
 import android.view.*;
-import android.view.View;
+
+import com.schematical.adam.drawable.AdamDrawable;
+import com.schematical.adam.drawable.AdamHud;
+import com.schematical.adam.drawable.AdamRadar;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -20,7 +19,8 @@ import java.util.Hashtable;
 /**
  * Created by user1a on 9/30/13.
  */
-public class AdamView extends SurfaceView implements SurfaceHolder.Callback {
+public class AdamView extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener {
+
     private SurfaceHolder mHolder;
     private AdamHud ah;
     private Camera mCamera;
@@ -30,17 +30,18 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback {
     private double yAngle;
     private double zAngle;
     private AdamRadar mRadar;
-    public Location mLoctaion;
+
 
     public String focusObjectId = null;
-
+    private Hashtable<String, AdamDrawable> controls = new Hashtable<String, AdamDrawable>();
 
 
     public AdamView(Context context, Camera camera) {
         super(context);
+        this.setOnTouchListener(this);
         mCamera = camera;
         mRadar = new AdamRadar(this);
-        mRadar.MakeFullScreen();
+        //mRadar.MakeFullScreen();
         ah = new AdamHud(this);
 
         focusObjectId = "100 State";
@@ -55,12 +56,21 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback {
         setWillNotDraw(false);
 
     }
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        return false;
+    }
 
     public void UpdateOrientation(double nXAngle,double nYAngle,double nZAngle){
         xAngle = nXAngle;
         yAngle = nYAngle;
         zAngle = nZAngle;
     }
+
+    public Canvas GetCanvas() {
+        return mCanvas;
+    }
+
     @Override
     public void onDraw(Canvas canvas){
         mCanvas = canvas;
@@ -74,10 +84,10 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback {
 
         AdamActivityMain am = ((AdamActivityMain) getContext());
 
-        mLoctaion = am.GetLocation();
+        Location mLoctaion = am.GetLocation();
         if(mLoctaion != null){
-            double mLat = mLoctaion.getLongitude();
-            double mLng = mLoctaion.getLatitude();
+            double mLat = mLoctaion.getLatitude();
+            double mLng = mLoctaion.getLongitude();
 
             Hashtable<String, AdamObject> mObjects = am.GetAdamObjects();
             Enumeration names = mObjects.keys();
@@ -94,36 +104,42 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback {
 
                     float x = 0;
                     float y = 0;
+                    if(mObject.GetLng() != 0){
 
-                    double lngDiff = mLng - mObject.GetLng();
-                    double latDiff = (mLat - mObject.GetLat());
-                    double distance = Math.sqrt(Math.pow(lngDiff, 2) + Math.pow(latDiff,2));
-                    double mObjectRelitiveAngle = Math.atan(lngDiff / latDiff);
-                    double mObjectAngleDiff = mObjectRelitiveAngle - xAngle;
-
-                    double bigX = Math.cos(xAngle) * canvas.getWidth();
-                    double bigY = Math.sin(xAngle) * canvas.getWidth();
-                    mObject.SetRadarXY(xAngle, distance);
-                    double screenX = bigX + canvas.getWidth()/2;
-
-                    //Figure out how wide the angle of view seen by the camera is
-                    double viewWidth = Math.PI/2;
-                    //First determin if it is in the view range
-
-
-                   if(bigY > 0 ){
-                        mObject.SetGoalXY(
-                            (int) Math.round(screenX),
-                            Math.round(canvas.getHeight()/2)
+                        double distance = AdamLocation.distFrom(
+                                (float) mLat,
+                                (float) mLng,
+                                (float) mObject.GetLat(),
+                                (float) mObject.GetLng()
                         );
-                        mObject.Draw(canvas);
-                    }
+                        double mObjectRelitiveAngle = mLng - mObject.GetLng() / (mLat - mObject.GetLat());
+                        
+                        double mObjectAngleDiff = mObjectRelitiveAngle + xAngle;
 
-               // }
+                        double bigX = Math.cos(mObjectAngleDiff) * canvas.getWidth();
+                        double bigY = Math.sin(mObjectAngleDiff) * canvas.getHeight();
+                        mObject.SetRadarXY(mObjectAngleDiff, distance);
+                        double screenX = bigX + canvas.getWidth()/2;
+
+                        //Figure out how wide the angle of view seen by the camera is
+                        double viewWidth = Math.PI/2;
+                        //First determin if it is in the view range
+
+
+                       if(bigY > 0 ){
+                            mObject.SetGoalXY(
+                                (int) Math.round(screenX),
+                                Math.round(canvas.getHeight()/2)
+                            );
+                            mObject.Draw(canvas);
+                        }
+
+                }
             }
         }
         ah.Draw(canvas);
         postInvalidate();
+
 
 
 
@@ -171,13 +187,9 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    public void UpdateLocation(Location location) {
-        // Report to the UI that the location was updated
-        String msg = "Updated Location: " +
-                Double.toString(location.getLatitude()) + "," +
-                Double.toString(location.getLongitude());
-        Log.d("Adam",msg);
-        this.mLoctaion = location;
-    }
 
+
+    public void AddChildControl(AdamDrawable adamDrawable) {
+        controls.put(adamDrawable.GetId(), adamDrawable);
+    }
 }

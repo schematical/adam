@@ -6,13 +6,12 @@ import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.util.Log;
 
-import org.json.JSONArray;
+import com.schematical.adam.drawable.AdamRadar;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
@@ -56,30 +55,33 @@ public class AdamObject {
         return am.mPreview.focusObjectId.equals(this.id);
     }
     public void Draw(Canvas canvas){
+        Location newLocation = new Location("gps");
+        Location oLocation = am.GetLocation();
+        newLocation.setLatitude(this.lat);
+        newLocation.setLongitude(this.lng);
+        newLocation.setAltitude(oLocation.getAltitude());
+
+        newLocation.setAccuracy(3.0f);
+        float cDist = oLocation.distanceTo(newLocation);
         currX = Math.round(currX + goalX)/2;
         currY = Math.round(currY + goalY)/2;
+        paint.setTextSize(Math.round(40 - (cDist/4)));
         canvas.drawText(
                 this.id,
                 currX,
                 currY,
                 paint
         );
-        if(IsFocused()){
-            Location newLocation = new Location("gps");
-            Location oLocation = am.GetLocation();
-            newLocation.setLatitude(this.lat);
-            newLocation.setLongitude(this.lng);
-            newLocation.setAltitude(oLocation.getAltitude());
+        //if(IsFocused()){
 
-            newLocation.setAccuracy(3.0f);
-            float cDist = oLocation.distanceTo(newLocation);
+
             canvas.drawText(
                     "Dist:" + Float.toString(cDist),
                     currX,
                     currY + 45,
                     paint
             );
-        }
+        //}
     }
     public void SetGoalXY(int nGoalX, int nGoalY){
         goalX = nGoalX;
@@ -224,15 +226,18 @@ public class AdamObject {
     }
     public void DrawRadar(Canvas canvas, AdamRadar adamRadar, int nWidth, int nHeight){
         paint.setTextSize(20);
-        double bigX  = Math.cos(this.radarAngle) * this.radarDistance / AdamRadar.DEFAULT_MAX_DIST * (nWidth/2) ;
-        double bigY = Math.sin(this.radarAngle)  * this.radarDistance / AdamRadar.DEFAULT_MAX_DIST * (nHeight/2);
+        if(this.lat != 0){
+            double radius = this.radarDistance / AdamRadar.DEFAULT_MAX_DIST * (nWidth/2);
+            double bigX  = Math.cos(this.radarAngle) *  radius;
+            double bigY = Math.sin(this.radarAngle)  * radius;//this.radarDistance / AdamRadar.DEFAULT_MAX_DIST * (nHeight/2);
 
-        String sDesc = this.alias + "(" + Double.toString(this.lat) + "," + Double.toString(this.lng) + ")";
-        canvas.drawText(
-            sDesc,
-            (float) bigX + canvas.getWidth() / 2,
-            (float)bigY + canvas.getHeight() / 2,
-            paint
-        );
+            String sDesc = this.alias + "(" + Double.toString(this.lat) + "," + Double.toString(this.lng) + ")";
+            canvas.drawText(
+                sDesc,
+                (float) bigX + canvas.getWidth() / 2,
+                (float)bigY + canvas.getHeight() / 2,
+                paint
+            );
+        }
     }
 }

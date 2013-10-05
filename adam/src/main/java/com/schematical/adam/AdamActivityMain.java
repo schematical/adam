@@ -35,8 +35,7 @@ import com.google.android.gms.common.GooglePlayServicesClient;
 import java.util.Hashtable;
 
 
-public class AdamActivityMain extends Activity implements SensorEventListener,LocationListener, GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener  {
+public class AdamActivityMain extends Activity implements SensorEventListener {
 
     public static final double PING_DISTANCE = 10;
     private Hashtable mObjects = new Hashtable();
@@ -54,12 +53,11 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
     public WifiManager wifiManager;
     private AdamWifiManager wifiReceiver;
     private AdamSaveDriver saveDriver;
-    private AdamBluetooth bluetoothDriver;
-    private Location mLocation;
-    private Location mLastPingLocation;
-    public Location mOrigLocation;
+    public AdamBluetooth bluetoothDriver;
+
     public boolean allowPing = false;
     public int pingCt = 0;
+    private AdamLocation aLocation;
 
 
     public AdamActivityMain() {
@@ -84,12 +82,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
         mOrientation = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         bluetoothDriver = new AdamBluetooth(this);
 
-        // Acquire a reference to the system Location Manager
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-        // Register the listener with the Location Manager to receive location updates
-        this.SetStatus("Waiting for GPS");
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        aLocation = new AdamLocation(this);
 
         if(this.IsWifiConnected()){
             //this.SetStatus("Cannot scan while connected to wifi");
@@ -132,19 +125,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
         this.saveDriver.Save();
     }
     public Location GetLocation(){
-       /*
-
-            double mLat = -89.38712835104843;//mLoctaion.getLongitude()
-            double mLng = 43.074808234970945;//mLoctaion.getLatitude()
-            Location newLocation = new Location("gps");
-            mLocation.setLatitude(mLat);
-            mLocation.setLongitude(mLng);
-            mLocation.setAccuracy(3.0f);
-            return newLocation;
-
-        }*/
-
-        return mLocation;
+        return aLocation.GetLocation();
     }
     public Hashtable<String, AdamObject>GetAdamObjects(){
         return mObjects;
@@ -169,7 +150,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
         super.onResume();
         mSensorManager.registerListener(this, mOrientation, SensorManager.SENSOR_DELAY_NORMAL);
         registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-        if(this.mLocation != null){
+        if(GetLocation() != null){
             bluetoothDriver.StartDiscovery();
         }
     }
@@ -220,49 +201,8 @@ public class AdamActivityMain extends Activity implements SensorEventListener,Lo
                 return super.onOptionsItemSelected(item);
         }
     }
-    public void onLocationChanged(Location location) {
-        mLocation = location;
-        if(
-            (mLastPingLocation == null) ||
-            (mLastPingLocation.distanceTo(mLocation) > mLocation.getAccuracy() * (1.5))
-        ){
-            if(mOrigLocation == null){
-                mOrigLocation = mLocation;
-                bluetoothDriver.StartDiscovery();
-            }
-            mLastPingLocation = mLocation;
-            this.allowPing = true;
-
-        }
 
 
-    }
-
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    public void onProviderEnabled(String provider) {
-        this.SetStatus("GPS Enabled");
-    }
-
-    public void onProviderDisabled(String provider) {
-        this.SetStatus("GPS Disabled");
-    }
 
 
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.d("Adam", "CONNECTED!");
-    }
-
-    @Override
-    public void onDisconnected() {
-        Log.d("Adam", "DISCONNECTED!");
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d("Adam", "Connection Failed :(");
-    }
 }

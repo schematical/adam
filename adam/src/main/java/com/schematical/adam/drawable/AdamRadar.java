@@ -1,8 +1,11 @@
-package com.schematical.adam;
+package com.schematical.adam.drawable;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import com.schematical.adam.AdamActivityMain;
+import com.schematical.adam.AdamObject;
+import com.schematical.adam.AdamView;
 import com.schematical.adam.drawable.AdamDrawable;
 
 import java.util.Enumeration;
@@ -14,12 +17,24 @@ import java.util.Hashtable;
 public class AdamRadar extends AdamDrawable {
     public static final double DEFAULT_MAX_DIST = 100;
     protected boolean blnFullScreen = false;
-    AdamRadar(AdamView nAv) {
+    protected int orig_height = 0;
+    protected int orig_width = 0;
+    public AdamRadar(AdamView nAv) {
         super(nAv);
     }
 
     public void MakeFullScreen(){
-        this.blnFullScreen = true;
+        if(this.blnFullScreen){
+            orig_width = av.GetCanvas().getWidth()- 2 * padding;
+            orig_height = av.GetCanvas().getHeight()- 2 * padding;
+        }else{
+            this.blnFullScreen = true;
+            orig_height = this.height;
+            orig_width = this.width;
+
+
+
+        }
     }
 
     public void Draw(Canvas canvas, double xAngle, double yAngle, double zAngle){
@@ -27,12 +42,7 @@ public class AdamRadar extends AdamDrawable {
         int nHeight = height;
 
 
-        if(this.blnFullScreen){
-            nWidth = canvas.getWidth()- 2 * padding;
-            nHeight = canvas.getHeight()- 2 * padding;
-            /*middleX = (canvas.getWidth()- 20) - nWidth/2 ;
-            middleY = (canvas.getHeight() - 20) - nHeight/2;*/
-        }
+
         int middleX = (canvas.getWidth()- padding) - nWidth/2 ;
         int middleY = (canvas.getHeight() - padding) - nHeight/2;
 
@@ -58,8 +68,9 @@ public class AdamRadar extends AdamDrawable {
                 Math.round(middleY + Math.sin(xAngle) * nHeight/2),
                 paint
         );
-
-        DrawAdamObjects(canvas, nWidth, nHeight);
+        if(this.blnFullScreen){
+            DrawAdamObjects(canvas, nWidth, nHeight);
+        }
 
     }
     public void DrawAdamObjects(Canvas canvas, int nWidth, int nHeight){

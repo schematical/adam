@@ -1,8 +1,11 @@
-package com.schematical.adam;
+package com.schematical.adam.drawable;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.location.Location;
+
+import com.schematical.adam.AdamActivityMain;
+import com.schematical.adam.AdamView;
 
 /**
  * Created by user1a on 10/1/13.
@@ -11,7 +14,7 @@ public class AdamHud {
     private AdamView av;
     private Paint paint;
 
-    AdamHud(AdamView nAv){
+    public AdamHud(AdamView nAv){
         av = nAv;
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(0xff00ff00);
@@ -56,7 +59,7 @@ public class AdamHud {
             );
 
 
-            msg = "Ping Ct: " + am.pingCt + "   - Dist from Orig: " + Double.toString(am.mOrigLocation.distanceTo(oLocation));
+            msg = "Ping Ct: " + am.pingCt;
             canvas.drawText(
                     msg,
                     100,
