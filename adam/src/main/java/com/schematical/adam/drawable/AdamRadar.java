@@ -23,7 +23,7 @@ public class AdamRadar extends AdamDrawable {
     protected boolean blnFullScreen = false;
     protected int orig_height = 0;
     protected int orig_width = 0;
-    public AdamRadar(AdamView nAv) {
+    public AdamRadar(iAdamDrawable nAv) {
         super(nAv);
 
     }

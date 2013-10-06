@@ -19,6 +19,7 @@ import com.schematical.adam.drawable.AdamIcon;
 import com.schematical.adam.drawable.AdamObjectHud;
 import com.schematical.adam.drawable.AdamObjectMiniProfile;
 import com.schematical.adam.drawable.AdamRadar;
+import com.schematical.adam.drawable.iAdamDrawable;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -27,7 +28,7 @@ import java.util.Hashtable;
 /**
  * Created by user1a on 9/30/13.
  */
-public class AdamView extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener, AdamDrawable.iAdamDrawable {
+public class AdamView extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener, iAdamDrawable {
 
     private final AdamObjectMiniProfile miniProfile;
     private SurfaceHolder mHolder;
@@ -47,8 +48,6 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
     public AdamDPad rDPad;
     private boolean targetIsLocked = false;
     private AdamObject objFocused;
-
-
 
 
     public AdamView(Context context, Camera camera) {
@@ -254,7 +253,9 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
         while(keys.hasMoreElements()){
             String key = keys.nextElement();
             AdamDrawable ad = (AdamDrawable) controls.get(key);
-            ad.Draw(canvas);
+            if(ad.getObjParent() == null){
+                ad.Draw(canvas);
+            }
         }
 
         postInvalidate();
@@ -322,5 +323,11 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
 
     public void SetFocus(AdamObject objFocused) {
         this.objFocused = objFocused;
+    }
+    public String GetFocusedAlias(){
+        if(this.objFocused != null){
+            return this.objFocused.GetAlias();
+        }
+        return null;
     }
 }

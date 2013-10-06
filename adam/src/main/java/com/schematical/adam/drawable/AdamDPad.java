@@ -18,7 +18,7 @@ public class AdamDPad extends AdamDrawable {
     protected AdamDPadKey dLeft;
     protected AdamDPadKey dRight;
     protected AdamDPadKey dDown;
-    public AdamDPad(AdamView nAv) {
+    public AdamDPad(iAdamDrawable nAv) {
         super(nAv);
         height = 300;
         width = 300;

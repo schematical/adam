@@ -13,7 +13,7 @@ public class AdamObjectRadar extends AdamDrawable {
     private double radarAngle;
     private double radarDistance;
 
-    public AdamObjectRadar(AdamView nAv, AdamObject nAo) {
+    public AdamObjectRadar(iAdamDrawable nAv, AdamObject nAo) {
         super(nAv);
         this.ao = nAo;
     }

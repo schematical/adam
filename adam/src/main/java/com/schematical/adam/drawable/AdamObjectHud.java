@@ -25,7 +25,7 @@ public class AdamObjectHud extends AdamDrawable {
 
     AdamObject ao;
 
-    public AdamObjectHud(AdamView nAv, AdamObject nAo) {
+    public AdamObjectHud(iAdamDrawable nAv, AdamObject nAo) {
         super(nAv);
         this.ao = nAo;
     }

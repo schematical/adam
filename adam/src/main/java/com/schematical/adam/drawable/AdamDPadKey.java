@@ -20,7 +20,7 @@ public class AdamDPadKey extends AdamIcon{
 
     protected String actionParameter;
     protected double direction;
-    public AdamDPadKey(AdamView nAv, char charCode) {
+    public AdamDPadKey(iAdamDrawable nAv, char charCode) {
         super(nAv,charCode);
 
 

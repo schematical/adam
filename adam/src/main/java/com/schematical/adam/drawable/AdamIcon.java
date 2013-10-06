@@ -45,7 +45,7 @@ public class AdamIcon extends AdamDrawable{
     public static final char twitter = 0xf099;
     protected char icon;
 
-    public AdamIcon(AdamView nAv, char nIcon) {
+    public AdamIcon(iAdamDrawable nAv, char nIcon) {
         super(nAv);
         icon = nIcon;
         this.height = 140;

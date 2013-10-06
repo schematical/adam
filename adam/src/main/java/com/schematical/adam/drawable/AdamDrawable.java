@@ -9,6 +9,8 @@ import android.view.View;
 
 import com.schematical.adam.AdamView;
 
+import java.util.Hashtable;
+
 /**
  * Created by user1a on 10/4/13.
  */
@@ -33,9 +35,23 @@ abstract public class AdamDrawable implements iAdamDrawable{
     protected int padding = 20;
     protected AdamView av;
 
-    public AdamDrawable(AdamView nAv){
-        av = nAv;
-        av.AddChildControl(this);
+
+
+    protected AdamDrawable objParent;
+    protected Hashtable<String, AdamDrawable> children = new Hashtable<String, AdamDrawable>();
+
+    public AdamDrawable(iAdamDrawable nAv){
+        if(nAv instanceof AdamView){
+            av = (AdamView)nAv;
+            av.AddChildControl(this);
+        }else if(nAv instanceof AdamDrawable){
+            av = ((AdamDrawable) nAv).getAv();
+            av.AddChildControl(this);
+
+            objParent = (AdamDrawable)nAv;
+            objParent.AddChildControl(this);
+        }
+
         bg_paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         bg_paint.setColor(0x88000000);
         bg_paint.setStyle(Paint.Style.FILL);
@@ -193,6 +209,11 @@ abstract public class AdamDrawable implements iAdamDrawable{
     public AdamView getAv() {
         return av;
     }
+    public void AddChildControl(AdamDrawable child){
+        this.children.put(child.getId(), child);
+    }
+    public AdamDrawable getObjParent() {
+        return objParent;
+    }
 
-   
 }

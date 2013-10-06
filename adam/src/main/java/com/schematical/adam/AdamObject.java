@@ -55,7 +55,7 @@ public class AdamObject {
     }
     public AdamObjectHud Hud(){
         if(this.mHud == null){
-            this.mHud = new AdamObjectHud(am.GetView(), this);
+            this.mHud = new AdamObjectHud((AdamView)am.GetView(), this);
         }
         return mHud;
     }

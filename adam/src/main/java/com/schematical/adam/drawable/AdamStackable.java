@@ -1,6 +1,6 @@
-package com.schematical.adam;
+package com.schematical.adam.drawable;
 
-import com.schematical.adam.drawable.AdamDrawable;
+import com.schematical.adam.AdamView;
 
 /**
  * Created by user1a on 10/6/13.
@@ -15,8 +15,11 @@ public class AdamStackable extends AdamDrawable {
 
 
     protected Double corner = AdamStackable.CORNER_NONE;
-    public AdamStackable(AdamView nAv) {
+    public AdamStackable(iAdamDrawable nAv) {
         super(nAv);
+        this.height = 40;
+        this.width = 300;
+        this.padding = 10;
     }
 
     public Double getCorner() {

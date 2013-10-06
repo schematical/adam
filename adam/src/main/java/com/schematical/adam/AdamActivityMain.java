@@ -82,10 +82,13 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
         speachDriver = new AdamTTSDriver(this);
         status = "Uninitialized";
         // Create an instance of Camera
-        mCamera = getCameraInstance();
+
         saveDriver = new AdamSaveDriver(this);
         saveDriver.Load();
         // Create our Preview view and set it as the content of our activity.
+        mCamera = getCameraInstance();
+        imgRecDriver = new AdamImgRecDriver(this);
+        imgRecDriver.WatchCamera(mCamera);
         mView = new AdamView(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mView);
@@ -100,8 +103,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
             //this.SetStatus("Cannot scan while connected to wifi");
             saveDriver.Save();
         }
-        imgRecDriver = new AdamImgRecDriver(this);
-        imgRecDriver.WatchCamera(mCamera);
+
 
     }
     public void Speak(String text){
@@ -141,8 +143,11 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
 
             AdamObject mObject = (AdamObject) mObjects.get(objId);
             if(
-                (mObject.GetId().equals(id)) ||
-                (mObject.GetAlias().equals(id))
+                (mObject != null) &&
+                (
+                    (mObject.GetId().equals(id)) ||
+                    (mObject.GetAlias().equals(id))
+                )
             ){
                 return mObject;
             }

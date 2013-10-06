@@ -21,19 +21,19 @@ public class AdamHud extends AdamDrawable{
     public void Draw(Canvas canvas){
         AdamActivityMain am = (AdamActivityMain) av.getContext();
 
-        canvas.drawText(
+    /*    canvas.drawText(
                 am.GetStatus(),
                 100,
                 40,
                 paint
-        );
+        );*/
         if(av.GetFocus() != null){
-            canvas.drawText(
+           /* canvas.drawText(
                     av.GetFocus().GetAlias(),
                     100,
                     canvas.getHeight() - 150,
                     paint
-            );
+            );*/
         }
 
         Location oLocation = am.GetLocation();
