@@ -53,9 +53,9 @@ public class AdamObjectHud extends AdamDrawable {
         paint.setColor(0xffffffff);
         paint.setTextSize(20);
         StringBuilder sb = new StringBuilder();
-
+        sb.append(0xf09e);
         canvas.drawText(
-                String.valueOf('\uf09e'),
+                sb.toString(),
                 currX,
                 currY,
                 paint

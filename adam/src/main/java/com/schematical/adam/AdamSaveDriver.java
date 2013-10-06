@@ -75,7 +75,7 @@ public class AdamSaveDriver {
             );
         }
         am.SetStatus(
-                "Loaded " + Integer.toString(jObj.length()) + " Adam Objects"
+                "Loaded " + Integer.toString(jObj.length()) + " Objects"
         );
 
     }

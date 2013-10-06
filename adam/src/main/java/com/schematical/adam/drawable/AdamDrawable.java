@@ -1,5 +1,6 @@
 package com.schematical.adam.drawable;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -11,7 +12,7 @@ import com.schematical.adam.AdamView;
 /**
  * Created by user1a on 10/4/13.
  */
-public class AdamDrawable {
+abstract public class AdamDrawable {
     protected String id = null;
     protected final Paint paint;
     protected final Paint bg_paint;
@@ -20,10 +21,10 @@ public class AdamDrawable {
 
     protected int height = 200;
     protected int width = 200;
-    protected int top;
-    protected int left;
-    protected int right;
-    protected int bottom;
+    protected Integer top = null;
+    protected Integer left = null;
+    protected Integer right = null;
+    protected Integer bottom = null;
 
 
     protected int zIndex = 0;
@@ -49,6 +50,7 @@ public class AdamDrawable {
 
     }
 
+    public void Draw(Canvas canvas){};
     public String getId() {
         return this.id;
     }
@@ -131,6 +133,37 @@ public class AdamDrawable {
 
     public void onTouch(View v, MotionEvent event) {
 
+    }
+    public void DrawBitmap(Canvas canvas, Bitmap bm){
+        DrawBitmap(
+            canvas,
+            bm,
+            this.getX(),
+            this.getY(),
+            width,
+            height
+        );
+    }
+    public void DrawBitmap(Canvas canvas, Bitmap bm, int x, int y){
+        DrawBitmap(
+            canvas,
+            bm,
+            x,
+            y,
+            bm.getWidth(),
+            bm.getHeight()
+        );
+    }
+
+    public void DrawBitmap(Canvas canvas, Bitmap bm, int nX, int nY, int nWidth, int nHeight){
+
+        Bitmap nIcon = Bitmap.createScaledBitmap(av.icon,nWidth, nHeight, true);
+        canvas.drawBitmap(
+                nIcon,
+                nX,
+                nY,
+                bg_paint
+        );
     }
 
 

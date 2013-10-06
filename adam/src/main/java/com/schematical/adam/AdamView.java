@@ -10,6 +10,8 @@ import android.util.Log;
 
 import android.view.*;
 
+import com.schematical.adam.drawable.AdamDPad;
+import com.schematical.adam.drawable.AdamDPadKey;
 import com.schematical.adam.drawable.AdamDrawable;
 import com.schematical.adam.drawable.AdamHud;
 import com.schematical.adam.drawable.AdamObjectHud;
@@ -38,6 +40,7 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
     public String focusObjectId = null;
     private Hashtable<String, AdamDrawable> controls = new Hashtable<String, AdamDrawable>();
     public Bitmap icon;
+    public AdamDPad rDPad;
 
 
     public AdamView(Context context, Camera camera) {
@@ -46,9 +49,16 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
         this.CacheBitmaps();
         mCamera = camera;
         mRadar = new AdamRadar(this);
-        mRadar.setBottom(20);
+        mRadar.setTop(20);
         mRadar.setRight(20);
         ah = new AdamHud(this);
+
+        rDPad = new AdamDPad(this);
+        rDPad.setBottom(20);
+        rDPad.setRight(20);
+        rDPad.setDDown(
+                new AdamDPadKey(this, 0xf09e, "ping")
+        );
 
         focusObjectId = "100 State";
 
@@ -149,26 +159,39 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
                     //First determin if it is in the view range
 
 
-                   if(bigY > 0 ){
-                        AdamObjectHud objHud = mObject.Hud();
+
+                    AdamObjectHud objHud = mObject.Hud();
+                    if(bigY > 0 ){
                         objHud.SetGoalXY(
                             (int) Math.round(screenX),
                             (int) Math.round(screenY)
                         );
-                       objHud.Draw(canvas);
+                    }else{
+                        objHud.SetGoalXY(
+                                (int) -200,
+                                (int) -200
+                        );
                     }
-                    if(
+
+                    /*if(
                         (focusObjectId.equals(objId)) ||
                         (focusObjectId == null)
                     ){
                         Log.d("adam", "Baring: " + mLocation.bearingTo(mObjLoc));
                         Log.d("adam", "Deg: " + AdamHelper.To360Degrees(mObjectAngleDiff) + " - rel:" + AdamHelper.To360Degrees(mObjectRelitiveAngle) + " - x:" + AdamHelper.To360Degrees(mObjectRelitiveAngle));
-                    }
+                    }*/
                 }
 
             }
         }
-        ah.Draw(canvas);
+        Enumeration<String> keys = controls.keys();
+
+        while(keys.hasMoreElements()){
+            String key = keys.nextElement();
+            AdamDrawable ad = (AdamDrawable) controls.get(key);
+            ad.Draw(canvas);
+        }
+
         postInvalidate();
 
 
