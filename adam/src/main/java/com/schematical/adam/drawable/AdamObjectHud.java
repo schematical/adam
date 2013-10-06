@@ -1,11 +1,14 @@
 package com.schematical.adam.drawable;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.location.Location;
 
 import com.schematical.adam.AdamActivityMain;
 import com.schematical.adam.AdamObject;
 import com.schematical.adam.AdamView;
+import com.schematical.adam.R;
 
 /**
  * Created by user1a on 10/5/13.
@@ -35,7 +38,29 @@ public class AdamObjectHud extends AdamDrawable {
 
         currX = Math.round(currX + goalX)/2;
         currY = Math.round(currY + goalY)/2;
-        paint.setTextSize(Math.round(40 - (cDist/4)));
+
+
+        canvas.drawBitmap(
+                av.icon,
+                currX,
+                currY,
+                bg_paint
+        );
+
+        //paint.setTextSize(Math.round(40/cDist));
+        Typeface tf= Typeface.createFromAsset(av.getContext().getAssets(),"font/fontawesome-webfont.ttf");
+        paint.setTypeface(tf);
+        paint.setColor(0xffffffff);
+        paint.setTextSize(20);
+        StringBuilder sb = new StringBuilder();
+
+        canvas.drawText(
+                String.valueOf('\uf09e'),
+                currX,
+                currY,
+                paint
+        );
+        /*
         canvas.drawText(
                 ao.GetAlias(),
                 currX,
@@ -48,7 +73,7 @@ public class AdamObjectHud extends AdamDrawable {
                 currX,
                 currY + 45,
                 paint
-        );
+        );*/
 
     }
     public void SetGoalXY(int nGoalX, int nGoalY){

@@ -105,9 +105,7 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
     public void onLocationChanged(Location location) {
 
         Location oLoc = this.GetLocation();
-        if(oLoc != null){
-            Log.d("adam", "Jumping:" + Float.toString(oLoc.distanceTo(location)));
-        }
+
 
         double weight = 1/location.getAccuracy();
         this.lat_t += location.getLatitude() * weight;
@@ -115,8 +113,9 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
         this.altitude_t += location.getAltitude() * weight;
         this.weight_t += weight;
         this.measure_ct += 1;
-        if(oLoc != null){
-            Log.d("adam", "Smothed Jump:" + Float.toString(oLoc.distanceTo(this.GetLocation())));
+        if(oLoc == null){
+            am.SetStatus("Location Updated");
+
         }
 
 

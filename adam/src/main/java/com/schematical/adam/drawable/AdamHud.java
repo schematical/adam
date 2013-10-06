@@ -33,6 +33,7 @@ public class AdamHud extends AdamDrawable{
                 canvas.getHeight() - 150,
                 paint
         );
+
         Location oLocation = am.GetLocation();
         String msg = "";
         if(oLocation != null){

@@ -32,6 +32,7 @@ import android.location.LocationManager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
+import com.schematical.adam.tts.AdamTTSDriver;
 
 import java.util.Hashtable;
 
@@ -59,6 +60,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
     public boolean allowPing = false;
     public int pingCt = 0;
     private AdamLocation aLocation;
+    private AdamTTSDriver speachDriver;
 
 
     public AdamActivityMain() {
@@ -69,9 +71,9 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Typeface font = Typeface.createFromAsset( getAssets(), "fontawesome-webfont.ttf" );
 
-        
+
+        speachDriver = new AdamTTSDriver(this);
         status = "Uninitialized";
         // Create an instance of Camera
         mCamera = getCameraInstance();
@@ -95,12 +97,15 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
 
 
     }
-
+    public void Speak(String text){
+        this.speachDriver.Speak(text);
+    }
     public String GetStatus(){
         return status;
     }
     public void SetStatus(String nStatus){
         status = nStatus;
+        this.Speak(status);
     }
     public void UpdateAdamObject(String id, Object data){
         AdamObject ao = (AdamObject) mObjects.get(id);

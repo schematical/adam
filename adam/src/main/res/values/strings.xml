@@ -5,4 +5,5 @@
     <string name="action_ping">Ping</string>
     <string name="action_save">Save</string>
     <string name="action_load">Load</string>
+    <string name="icon_wave">&#xf09e;</string>"
 </resources>

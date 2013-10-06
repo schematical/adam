@@ -37,6 +37,7 @@ public class AdamDrawable {
         bg_paint.setColor(0x88000000);
         bg_paint.setStyle(Paint.Style.FILL);
 
+
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(0xffffffff);
         paint.setTextSize(20);

@@ -1,6 +1,8 @@
 package com.schematical.adam;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.hardware.Camera;
 import android.location.Location;
@@ -35,11 +37,13 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
 
     public String focusObjectId = null;
     private Hashtable<String, AdamDrawable> controls = new Hashtable<String, AdamDrawable>();
+    public Bitmap icon;
 
 
     public AdamView(Context context, Camera camera) {
         super(context);
         this.setOnTouchListener(this);
+        this.CacheBitmaps();
         mCamera = camera;
         mRadar = new AdamRadar(this);
         mRadar.setBottom(20);
@@ -57,6 +61,14 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         setWillNotDraw(false);
 
+    }
+    public void CacheBitmaps(){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        //options.inJustDecodeBounds = true;
+        this.icon = BitmapFactory.decodeResource(getResources(), R.drawable.icon, options);
+        int imageHeight = options.outHeight;
+        int imageWidth = options.outWidth;
+        String imageType = options.outMimeType;
     }
     @Override
     public boolean onTouch(View v, MotionEvent event) {
