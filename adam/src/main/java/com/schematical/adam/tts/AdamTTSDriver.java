@@ -38,7 +38,7 @@ public class AdamTTSDriver implements TextToSpeech.OnInitListener {
         if (status == TextToSpeech.SUCCESS) {
 
             int result = tts.setLanguage(Locale.US);
-            tts.setPitch(0.1f);
+            //tts.setPitch(0.1f);
             if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS", "This Language is not supported");

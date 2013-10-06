@@ -27,12 +27,14 @@ public class AdamHud extends AdamDrawable{
                 40,
                 paint
         );
-        canvas.drawText(
-                av.yAngle + " / " +  av.zAngle,
-                100,
-                canvas.getHeight() - 150,
-                paint
-        );
+        if(av.GetFocus() != null){
+            canvas.drawText(
+                    av.GetFocus().GetAlias(),
+                    100,
+                    canvas.getHeight() - 150,
+                    paint
+            );
+        }
 
         Location oLocation = am.GetLocation();
         String msg = "";

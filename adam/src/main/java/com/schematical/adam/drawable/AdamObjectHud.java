@@ -19,6 +19,10 @@ public class AdamObjectHud extends AdamDrawable {
     protected int currX = 0;
     protected int currY = 0;
 
+    public AdamObject getAdamObject() {
+        return ao;
+    }
+
     AdamObject ao;
 
     public AdamObjectHud(AdamView nAv, AdamObject nAo) {
@@ -48,7 +52,7 @@ public class AdamObjectHud extends AdamDrawable {
         );
 
         //paint.setTextSize(Math.round(40/cDist));
-        Typeface tf= Typeface.createFromAsset(av.getContext().getAssets(),"font/fontawesome-webfont.ttf");
+        Typeface tf= Typeface.createFromAsset(av.getContext().getAssets(), "font/fontawesome-webfont.ttf");
         paint.setTypeface(tf);
         paint.setColor(0xffffffff);
         paint.setTextSize(20);

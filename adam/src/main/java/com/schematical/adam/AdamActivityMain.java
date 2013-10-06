@@ -32,8 +32,10 @@ import android.location.LocationManager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
+import com.schematical.adam.img.AdamImgRecDriver;
 import com.schematical.adam.tts.AdamTTSDriver;
 
+import java.util.Enumeration;
 import java.util.Hashtable;
 
 
@@ -61,12 +63,16 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
     public int pingCt = 0;
     private AdamLocation aLocation;
     private AdamTTSDriver speachDriver;
+    private AdamImgRecDriver imgRecDriver;
 
 
     public AdamActivityMain() {
     }
 
-
+    public void Ping(){
+        this.SetStatus("Sending Ping...");
+        this.allowPing = true;
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +100,8 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
             //this.SetStatus("Cannot scan while connected to wifi");
             saveDriver.Save();
         }
-
+        imgRecDriver = new AdamImgRecDriver(this);
+        imgRecDriver.WatchCamera(mCamera);
 
     }
     public void Speak(String text){
@@ -125,6 +132,22 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
     }
     public Hashtable<String, AdamObject>GetAdamObjects(){
         return mObjects;
+    }
+    public AdamObject GetAdamObject(String id){
+        Enumeration names = mObjects.keys();
+        String objId = null;
+        while(names.hasMoreElements()) {
+            objId = (String) names.nextElement();
+
+            AdamObject mObject = (AdamObject) mObjects.get(objId);
+            if(
+                (mObject.GetId().equals(id)) ||
+                (mObject.GetAlias().equals(id))
+            ){
+                return mObject;
+            }
+        }
+        return null;
     }
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 

@@ -10,11 +10,14 @@ import android.util.Log;
 
 import android.view.*;
 
+import com.schematical.adam.drawable.AdamAction;
 import com.schematical.adam.drawable.AdamDPad;
 import com.schematical.adam.drawable.AdamDPadKey;
 import com.schematical.adam.drawable.AdamDrawable;
 import com.schematical.adam.drawable.AdamHud;
+import com.schematical.adam.drawable.AdamIcon;
 import com.schematical.adam.drawable.AdamObjectHud;
+import com.schematical.adam.drawable.AdamObjectMiniProfile;
 import com.schematical.adam.drawable.AdamRadar;
 
 import java.io.IOException;
@@ -24,8 +27,9 @@ import java.util.Hashtable;
 /**
  * Created by user1a on 9/30/13.
  */
-public class AdamView extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener {
+public class AdamView extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener, AdamDrawable.iAdamDrawable {
 
+    private final AdamObjectMiniProfile miniProfile;
     private SurfaceHolder mHolder;
     private AdamHud ah;
     private Camera mCamera;
@@ -41,6 +45,10 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
     private Hashtable<String, AdamDrawable> controls = new Hashtable<String, AdamDrawable>();
     public Bitmap icon;
     public AdamDPad rDPad;
+    private boolean targetIsLocked = false;
+    private AdamObject objFocused;
+
+
 
 
     public AdamView(Context context, Camera camera) {
@@ -53,14 +61,12 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
         mRadar.setRight(20);
         ah = new AdamHud(this);
 
-        rDPad = new AdamDPad(this);
-        rDPad.setBottom(20);
-        rDPad.setRight(20);
-        rDPad.setDDown(
-                new AdamDPadKey(this, 0xf09e, "ping")
-        );
 
-        focusObjectId = "100 State";
+        this.InitRightDPad();
+
+        this.miniProfile = new AdamObjectMiniProfile(this);
+        this.miniProfile.setTop(20);
+        this.miniProfile.setLeft(20);
 
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed.
@@ -72,6 +78,53 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
         setWillNotDraw(false);
 
     }
+
+    private void InitRightDPad() {
+        rDPad = new AdamDPad(this);
+        rDPad.setBottom(20);
+        rDPad.setRight(20);
+
+        AdamDPadKey dDown =new AdamDPadKey(this, AdamIcon.rss);
+        dDown.setActionParameter("ping");
+        dDown.setAction(new AdamAction() {
+            public void Exicute(Object actionParameter, AdamDrawable control){
+                ((AdamActivityMain)control.getAv().getContext()).Ping();
+            }
+
+        });
+        rDPad.setDDown(dDown);
+
+        AdamDPadKey dLeft =new AdamDPadKey(this, AdamIcon.target);
+        dLeft.setActionParameter("lock_target");
+        dLeft.setAction(new AdamAction() {
+            public void Exicute(Object actionParameter, AdamDrawable control){
+                control.getAv().toggleTargetLock();
+            }
+
+        });
+        rDPad.setDLeft(dLeft);
+
+        AdamDPadKey dRight =new AdamDPadKey(this, AdamIcon.cancel);
+        dRight.setActionParameter("cancel");
+        dRight.setAction(new AdamAction() {
+            public void Exicute(Object actionParameter, AdamDrawable control){
+                control.getAv().toggleTargetLock();
+            }
+
+        });
+        rDPad.setDRight(dRight);
+    }
+
+    private void toggleTargetLock() {
+        this.targetIsLocked = !this.targetIsLocked;
+        if(
+            (this.targetIsLocked) &&
+            (this.objFocused != null)
+        ){
+            ((AdamActivityMain)this.getContext()).SetStatus("Locking Target: " + this.objFocused.GetAlias());
+        }
+    }
+
     public void CacheBitmaps(){
         BitmapFactory.Options options = new BitmapFactory.Options();
         //options.inJustDecodeBounds = true;
@@ -161,11 +214,22 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
 
 
                     AdamObjectHud objHud = mObject.Hud();
+
+                    double lastFocusXDiff = 9999;
+
                     if(bigY > 0 ){
                         objHud.SetGoalXY(
                             (int) Math.round(screenX),
                             (int) Math.round(screenY)
                         );
+                        if(!this.targetIsLocked){
+                            double currFocusXDiff = Math.abs(screenX - canvas.getWidth()/2);
+                            if(currFocusXDiff < lastFocusXDiff){
+                                lastFocusXDiff = currFocusXDiff;
+                                objFocused = objHud.getAdamObject();
+                            }
+                        }
+
                     }else{
                         objHud.SetGoalXY(
                                 (int) -200,
@@ -184,6 +248,7 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
 
             }
         }
+        objFocused = ((AdamActivityMain)getContext()).GetAdamObject("100 State");
         Enumeration<String> keys = controls.keys();
 
         while(keys.hasMoreElements()){
@@ -248,5 +313,14 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
             adamDrawable.setId("c" + Integer.toString(controls.size()));
         }
         controls.put(adamDrawable.getId(), adamDrawable);
+    }
+
+
+    public AdamObject GetFocus() {
+        return objFocused;
+    }
+
+    public void SetFocus(AdamObject objFocused) {
+        this.objFocused = objFocused;
     }
 }

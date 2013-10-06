@@ -48,9 +48,9 @@ public class AdamBluetooth extends BroadcastReceiver{
         mBluetoothAdapter.startDiscovery();
     }
     public void UnregisterListener(){
-
+        mBluetoothAdapter.cancelDiscovery();
        am.unregisterReceiver(this);
-       mBluetoothAdapter.cancelDiscovery();
+
 
     }
     @Override

@@ -7,6 +7,7 @@ import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.util.Log;
 
+import com.schematical.adam.drawable.AdamIcon;
 import com.schematical.adam.drawable.AdamObjectHud;
 import com.schematical.adam.drawable.AdamObjectRadar;
 import com.schematical.adam.drawable.AdamRadar;
@@ -22,7 +23,8 @@ import java.util.List;
  * Created by user1a on 10/1/13.
  */
 public class AdamObject {
-
+    public static final String TYPE_WIFI_AP = "wifi-ap";
+    public static final String TYPE_BLUETOOTH_DEVICE = "bluetooth-device";
     protected AdamActivityMain am;
 
     protected String id;
@@ -37,6 +39,7 @@ public class AdamObject {
     protected double lat;
     protected double lng;
     protected double altutide;
+    protected String type;
 
     protected List<AdamPing> pings;
     private double accuracy;
@@ -81,6 +84,9 @@ public class AdamObject {
                 this.id = (String)jObj.get("id");
                 if(jObj.has("alias")){
                     this.alias = (String)jObj.get("alias");
+                }
+                if(jObj.has("type")){
+                    this.type = (String)jObj.get("type");
                 }
                 if(jObj.has("lat") && jObj.has("lng")){
                     this.lat = (Double)jObj.get("lat");
@@ -131,6 +137,7 @@ public class AdamObject {
             }
         }
         if(data instanceof AdamBluetoothScanResult){
+            this.type = AdamObject.TYPE_BLUETOOTH_DEVICE;
             AdamBluetoothScanResult sr = (AdamBluetoothScanResult) data;
             Location objLocation = am.GetLocation();
             AdamPing ap = new AdamPing(
@@ -149,6 +156,7 @@ public class AdamObject {
         }
         if(data instanceof ScanResult){
             //Track in a list of pings
+            this.type = AdamObject.TYPE_WIFI_AP;
             ScanResult sr = (ScanResult) data;
             this.alias = sr.SSID;
             Location objLocation = am.GetLocation();
@@ -214,5 +222,15 @@ public class AdamObject {
         nLocation.setLongitude(this.lng);
         nLocation.setAltitude(this.altutide);
         return nLocation;
+    }
+
+    public Character GetIcon() {
+        if(this.type == AdamObject.TYPE_WIFI_AP){
+            return AdamIcon.signle;
+        }
+        if(this.type == AdamObject.TYPE_BLUETOOTH_DEVICE){
+            return AdamIcon.mobile_phone;
+        }
+        return AdamIcon.question_mark;
     }
 }

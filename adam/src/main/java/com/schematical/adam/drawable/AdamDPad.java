@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.view.MotionEvent;
+import android.view.View;
 
 import com.schematical.adam.AdamView;
 
@@ -18,12 +20,12 @@ public class AdamDPad extends AdamDrawable {
     protected AdamDPadKey dDown;
     public AdamDPad(AdamView nAv) {
         super(nAv);
-        height = 200;
-        width = 200;
+        height = 300;
+        width = 300;
     }
     public void Draw(Canvas canvas){
         if(dUp != null){
-            dUp.setLeft(this.getX() + this.getWidth()/2 - dUp.getWidth()/2);
+            dUp.setLeft(this.getX() + this.getWidth() / 2 - dUp.getWidth() / 2);
             dUp.setTop(this.getY());
             dUp.Draw(canvas);
         }
@@ -41,7 +43,7 @@ public class AdamDPad extends AdamDrawable {
             dLeft.Draw(canvas);
         }
         if(dRight != null){
-            dRight.setRight(this.getX() + this.getWidth());
+            dRight.setLeft(this.getX() + this.getWidth() - dRight.getWidth());
             dRight.setTop(this.getY() + this.getHeight()/2 - dRight.getWidth()/2);
             dRight.Draw(canvas);
         }

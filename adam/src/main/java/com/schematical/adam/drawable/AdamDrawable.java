@@ -12,12 +12,14 @@ import com.schematical.adam.AdamView;
 /**
  * Created by user1a on 10/4/13.
  */
-abstract public class AdamDrawable {
+abstract public class AdamDrawable implements iAdamDrawable{
     protected String id = null;
     protected final Paint paint;
     protected final Paint bg_paint;
 
 
+    protected AdamAction action;
+    protected Object actionParameter;
 
     protected int height = 200;
     protected int width = 200;
@@ -132,7 +134,9 @@ abstract public class AdamDrawable {
     }
 
     public void onTouch(View v, MotionEvent event) {
-
+       if(action != null){
+           action.Exicute(this.actionParameter, this);
+       }
     }
     public void DrawBitmap(Canvas canvas, Bitmap bm){
         DrawBitmap(
@@ -167,4 +171,28 @@ abstract public class AdamDrawable {
     }
 
 
+    public void DrawIcon(Canvas canvas, Character icon, long nX, long nY){
+
+        Typeface oTf = paint.getTypeface();
+        Typeface tf= Typeface.createFromAsset(av.getContext().getAssets(), "font/fontawesome-webfont.ttf");
+        paint.setTypeface(tf);
+
+        canvas.drawText(
+            icon.toString(),
+            nX,
+            nY,
+            paint
+        );
+        paint.setTypeface(oTf);
+    }
+
+    public void setAction(AdamAction nAction) {
+        action = nAction;
+    }
+
+    public AdamView getAv() {
+        return av;
+    }
+
+   
 }
