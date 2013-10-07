@@ -39,7 +39,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 
-public class AdamActivityMain extends Activity implements SensorEventListener {
+public class AdamActivityMain extends Activity {
 
     public static final double PING_DISTANCE = 10;
     private Hashtable mObjects = new Hashtable();
@@ -50,8 +50,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
 
     private Paint paint;
 
-    private SensorManager mSensorManager;
-    private Sensor mOrientation;
+    private AdamSensorDriver sensorDriver;
     private String status;
 
 
@@ -66,6 +65,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
     private AdamImgRecDriver imgRecDriver;
 
 
+
     public AdamActivityMain() {
     }
 
@@ -78,7 +78,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        sensorDriver = new AdamSensorDriver(this);
         speachDriver = new AdamTTSDriver(this);
         status = "Uninitialized";
         // Create an instance of Camera
@@ -92,8 +92,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
         mView = new AdamView(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mView);
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mOrientation = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+
         bluetoothDriver = new AdamBluetooth(this);
 
         aLocation = new AdamLocation(this);
@@ -114,7 +113,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
     }
     public void SetStatus(String nStatus){
         status = nStatus;
-        this.Speak(status);
+        //this.Speak(status);
     }
     public void UpdateAdamObject(String id, Object data){
         AdamObject ao = (AdamObject) mObjects.get(id);
@@ -154,25 +153,11 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
         }
         return null;
     }
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
-    }
-
-
-
-
-
-    public void onSensorChanged(SensorEvent event) {
-        double xAngle = (event.values[0]/180) * Math.PI;// * Math.PI / 2;
-        double yAngle = (event.values[1]/180)  * Math.PI;// * Math.PI / 2;
-        double zAngle = (event.values[2]/180) * Math.PI;// * Math.PI / 2;
-
-        mView.UpdateOrientation(xAngle, yAngle, zAngle);
-    }
     @Override
     protected void onResume() {
         super.onResume();
-        mSensorManager.registerListener(this, mOrientation, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorDriver.onResume();
 
         wifiReceiver.StartScan();
         if(GetLocation() != null){
@@ -184,7 +169,7 @@ public class AdamActivityMain extends Activity implements SensorEventListener {
     protected void onPause() {
         super.onPause();
         unregisterReceiver(wifiReceiver);
-        mSensorManager.unregisterListener(this);
+        sensorDriver.onPause();
         bluetoothDriver.UnregisterListener();
     }
     /** A safe way to get an instance of the Camera object. */

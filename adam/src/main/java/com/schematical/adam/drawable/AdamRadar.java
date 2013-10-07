@@ -2,6 +2,7 @@ package com.schematical.adam.drawable;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.location.Location;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -10,6 +11,7 @@ import com.schematical.adam.AdamObject;
 import com.schematical.adam.AdamView;
 import com.schematical.adam.drawable.AdamDrawable;
 
+import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -18,6 +20,7 @@ import java.util.Hashtable;
  */
 public class AdamRadar extends AdamDrawable {
     public static final double DEFAULT_MAX_DIST = 100;
+    private final AdamStackablePercentField txtAccuracy;
 
 
     protected boolean blnFullScreen = false;
@@ -25,9 +28,24 @@ public class AdamRadar extends AdamDrawable {
     protected int orig_width = 0;
     public AdamRadar(iAdamDrawable nAv) {
         super(nAv);
+        txtAccuracy = new AdamStackablePercentField(this);
+        txtAccuracy.setName("Accuracy");
+        txtAccuracy.setWidth(this.getWidth());
+        try {
+            Method m = AdamRadar.class.getMethod("GetAccuracy");
+            txtAccuracy.Follow(this, m);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
 
     }
-
+    public Double GetAccuracy(){
+        Location objLocation = ((AdamActivityMain)av.getContext()).GetLocation();
+        if(objLocation == null){
+            return 0d;
+        }
+        return ((Float)(1/objLocation.getAccuracy())).doubleValue();
+    }
     public void ToggleFullScreen(){
         if(this.blnFullScreen){
             this.blnFullScreen = false;
@@ -82,8 +100,24 @@ public class AdamRadar extends AdamDrawable {
                 paint
         );
         DrawAdamObjects(canvas, width, height);
+        DrawStackable(canvas);
 
 
+    }
+    public void DrawStackable(Canvas canvas){
+        Enumeration<String> keys = children.keys();
+        int intNextY = getY() + this.getHeight() + this.padding;
+        while(keys.hasMoreElements()){
+            String key = keys.nextElement();
+            AdamDrawable ad =  this.children.get(key);
+
+            if(ad instanceof AdamStackable){
+                ad.setTop(intNextY);
+                ad.setLeft(this.getX());
+                ad.Draw(canvas);
+                intNextY += ad.getHeight() + this.padding;
+            }
+        }
     }
     public void DrawAdamObjects(Canvas canvas, int nWidth, int nHeight){
         Hashtable<String, AdamObject> aObjects = ((AdamActivityMain)av.getContext()).GetAdamObjects();

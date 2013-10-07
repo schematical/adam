@@ -3,6 +3,7 @@ package com.schematical.adam.drawable;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 
 import com.schematical.adam.AdamActivityMain;
 import com.schematical.adam.AdamObject;
@@ -18,6 +19,8 @@ public class AdamObjectMiniProfile  extends AdamDrawable{
     public static final int MAIN_WINDOW_WIDTH = 150;
     public static final int MAIN_WINDOW_HEIGHT = 150;
     private final AdamStackableTextField txtFocus;
+    private final AdamStackablePercentField txtDistance;
+    private final AdamStackablePercentField txtAccuracy;
 
     protected AdamStackableTextField txtStatus;
 
@@ -35,13 +38,55 @@ public class AdamObjectMiniProfile  extends AdamDrawable{
 
 
         txtFocus = new AdamStackableTextField(this);
+        txtFocus.Focus();
         try {
-            Method m = AdamActivityMain.class.getMethod("GetFocusedAlias");
-            txtStatus.Follow(av, m);
+            Method m = AdamView.class.getMethod("GetFocusedAlias");
+            txtFocus.Follow(av, m);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
 
+
+        txtDistance = new AdamStackablePercentField(this);
+        txtDistance.setName("Distance");
+        txtDistance.setUnits("m");
+        try {
+            Method m = AdamObjectMiniProfile.class.getMethod("GetDistanceToFocusObject");
+            txtDistance.Follow(this, m);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        txtAccuracy = new AdamStackablePercentField(this);
+        txtAccuracy.setName("Accuracy");
+        try {
+            Method m = AdamObjectMiniProfile.class.getMethod("GetFocusObjectAccuracy");
+            txtAccuracy.Follow(this, m);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+
+    }
+    public Double GetFocusObjectAccuracy(){
+        AdamObject aObj = av.GetFocus();
+        if(aObj != null){
+            Location oLocation =  aObj.GetLocation();
+            if(oLocation != null){
+                return ((Float)(1/oLocation.getAccuracy())).doubleValue();
+            }
+        }
+        return 0d;
+    }
+    public Double GetDistanceToFocusObject(){
+        AdamObject aObj = av.GetFocus();
+        if(aObj != null){
+
+            Location oLocation =  aObj.GetLocation();
+            Location mLocation =  ((AdamActivityMain) av.getContext()).GetLocation();
+            if((oLocation != null) && (mLocation != null)){
+                return ((Float)oLocation.distanceTo(mLocation)).doubleValue()/AdamRadar.DEFAULT_MAX_DIST ;
+            }
+        }
+        return Double.POSITIVE_INFINITY;
     }
     public void Draw(Canvas canvas){
         AdamObject adamObject = this.av.GetFocus();

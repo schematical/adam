@@ -19,7 +19,15 @@ public class AdamStackable extends AdamDrawable {
         super(nAv);
         this.height = 40;
         this.width = 300;
-        this.padding = 10;
+        this.padding = 25;
+        paint.setTextSize(20);
+    }
+    public void Focus(){
+        this.height = 70;
+        this.width = 450;
+        this.padding = 40;
+        paint.setTextSize(35);
+        this.InvertColor();
     }
 
     public Double getCorner() {

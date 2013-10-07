@@ -24,12 +24,13 @@ public class AdamStackableTextField extends AdamStackable{
         method = nMethod;
     }
     public void Draw(Canvas canvas){
-
+        int x = this.getX();
+        int y = this.getY();
         canvas.drawRect(
-            this.getX(),
-            this.getY(),
-            this.getWidth(),
-            this.getHeight(),
+            x,
+            y,
+            x + this.getWidth(),
+            y + this.getHeight(),
             bg_paint
         );
 
@@ -46,10 +47,11 @@ public class AdamStackableTextField extends AdamStackable{
                 e.printStackTrace();
             }
         }
+
         canvas.drawText(
             txt,
-            this.getX() + this.padding,
-            this.getY() + this.padding,
+            x + this.padding,
+            y + this.padding,
             paint
         );
     }

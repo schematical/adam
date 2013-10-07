@@ -216,4 +216,10 @@ abstract public class AdamDrawable implements iAdamDrawable{
         return objParent;
     }
 
+    public void InvertColor() {
+        int color = paint.getColor();
+        int bg_color = bg_paint.getColor();
+        bg_paint.setColor(color);
+        paint.setColor(bg_color);
+    }
 }

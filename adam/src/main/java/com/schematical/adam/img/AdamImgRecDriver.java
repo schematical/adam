@@ -43,10 +43,11 @@ public class AdamImgRecDriver implements Camera.FaceDetectionListener {
 
     @Override
     public void onFaceDetection(Camera.Face[] faces, Camera camera) {
+        if(faces.length > 0){
+            for(int i = 0; i < faces.length; i++){
 
-        for(int i = 0; i < faces.length; i++){
-
+            }
+            this.am.SetStatus("Found a face");
         }
-        this.am.SetStatus("Found a face");
     }
 }

@@ -206,6 +206,7 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
                     mObject.Radar().SetRadarXY(mObjectAngleDiff, distance);
                     double screenX = bigX + canvas.getWidth()/2;
                     double screenY = canvas.getHeight()/2; //Math.sin(yAngle) * canvas.getHeight();
+
                     //Figure out how wide the angle of view seen by the camera is
                     double viewWidth = Math.PI/2;
                     //First determin if it is in the view range
@@ -214,7 +215,7 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
 
                     AdamObjectHud objHud = mObject.Hud();
 
-                    double lastFocusXDiff = 9999;
+                    double lastFocusXDiff = Double.POSITIVE_INFINITY;
 
                     if(bigY > 0 ){
                         objHud.SetGoalXY(
@@ -230,24 +231,15 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
                         }
 
                     }else{
-                        objHud.SetGoalXY(
-                                (int) -200,
-                                (int) -200
-                        );
+                        objHud.Hide();
                     }
 
-                    /*if(
-                        (focusObjectId.equals(objId)) ||
-                        (focusObjectId == null)
-                    ){
-                        Log.d("adam", "Baring: " + mLocation.bearingTo(mObjLoc));
-                        Log.d("adam", "Deg: " + AdamHelper.To360Degrees(mObjectAngleDiff) + " - rel:" + AdamHelper.To360Degrees(mObjectRelitiveAngle) + " - x:" + AdamHelper.To360Degrees(mObjectRelitiveAngle));
-                    }*/
+
                 }
 
             }
         }
-        objFocused = ((AdamActivityMain)getContext()).GetAdamObject("100 State");
+        //objFocused = ((AdamActivityMain)getContext()).GetAdamObject("100 State");
         Enumeration<String> keys = controls.keys();
 
         while(keys.hasMoreElements()){

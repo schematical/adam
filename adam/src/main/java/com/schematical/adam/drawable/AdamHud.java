@@ -21,40 +21,27 @@ public class AdamHud extends AdamDrawable{
     public void Draw(Canvas canvas){
         AdamActivityMain am = (AdamActivityMain) av.getContext();
 
-    /*    canvas.drawText(
-                am.GetStatus(),
-                100,
-                40,
-                paint
-        );*/
-        if(av.GetFocus() != null){
-           /* canvas.drawText(
-                    av.GetFocus().GetAlias(),
-                    100,
-                    canvas.getHeight() - 150,
-                    paint
-            );*/
-        }
+
 
         Location oLocation = am.GetLocation();
         String msg = "";
         if(oLocation != null){
-            msg = "Accuracy: " + oLocation.getAccuracy();
+            /*msg = "Accuracy: " + oLocation.getAccuracy();
             canvas.drawText(
                     msg,
                     100,
                     100,
                     paint
-            );
+            );*/
 
 
-            msg = "Ping Ct: " + am.pingCt;
+            /*msg = "Ping Ct: " + am.pingCt;
             canvas.drawText(
                     msg,
                     100,
                     canvas.getHeight() - 100,
                     paint
-            );
+            );*/
         }
 
     }
