@@ -1,7 +1,10 @@
 package com.schematical.adam.drawable.opengl;
 
 import android.opengl.Matrix;
-import android.os.SystemClock;
+
+import com.schematical.adam.AdamSensorDriver;
+import com.schematical.adam.drawable.opengl.AdamOpenGLDrawable;
+import com.schematical.adam.drawable.opengl.iAdamOpenGLDrawable;
 
 /**
  * Created by user1a on 10/7/13.
@@ -10,7 +13,7 @@ import android.os.SystemClock;
  *
  * And follow lat lng
  */
-public class AdamOpenGLCamera implements iAdamOpenGLDrawable {
+public class AdamOpenGLARCamera implements iAdamOpenGLDrawable {
     protected AdamOpenGLDrawable objFollow = null;
 
     private int rmOffset;
@@ -25,7 +28,7 @@ public class AdamOpenGLCamera implements iAdamOpenGLDrawable {
     private float upX;
     private float upY;
     private float upZ;
-    public AdamOpenGLCamera(){
+    public AdamOpenGLARCamera(){
         rmOffset = 0;
         eyeX = 0;
         eyeY = 0;
@@ -42,33 +45,8 @@ public class AdamOpenGLCamera implements iAdamOpenGLDrawable {
     }
 
     public float[] Update(){
-        if(objFollow != null){
-            centerX = objFollow.getX();
-            centerY = objFollow.getY();
-            centerZ = objFollow.getZ();
-            /*eyeX = objFollow.getX();
-            eyeY = objFollow.getY();
-            eyeZ = objFollow.getZ() - 3;*/
-        }
-        eyeX -= .01;
-        float[] rotationalMatrix = new float[16];
-        Matrix.setIdentityM(rotationalMatrix,0);
-        Matrix.setLookAtM(
-                rotationalMatrix,
-                0,
-                eyeX,
-                eyeY,
-                eyeZ,
-                centerX,
-                centerY,
-                centerZ,
-                upX,
-                upY,
-                upZ
-        );
 
-
-        return rotationalMatrix;
+        return AdamSensorDriver.rotationMatrix;
     }
     public float getEyeX() {
         return eyeX;

@@ -88,11 +88,14 @@ public class AdamOpenGLIcon extends AdamOpenGLDrawable {
         mTempMatrix = mvpMatrix.clone();
         Matrix.setIdentityM(mModelMatrix, 0);
         Matrix.translateM(mModelMatrix, 0, getX(), getY(), getZ());
-        //x += 1;
+        //x += .01;
+
+
         // Combine the rotation matrix with the projection and camera view
-        Matrix.multiplyMM(mModelMatrix, 0, mTempMatrix, 0, mModelMatrix, 0);
-        draw(mModelMatrix);
-        Matrix.translateM(mModelMatrix, 0, getX() * -1, getY() * -1, getZ() * -1);
+        Matrix.multiplyMM(mTempMatrix, 0, mModelMatrix, 0, mvpMatrix, 0);
+
+        // Draw triangle
+        draw(mTempMatrix);
     }
     public void draw(float[] mvpMatrix) {
 

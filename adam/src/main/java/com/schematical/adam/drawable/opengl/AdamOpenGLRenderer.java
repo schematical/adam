@@ -1,11 +1,9 @@
 package com.schematical.adam.drawable.opengl;
 
-import android.opengl.EGLConfig;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.opengl.Matrix;
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.schematical.adam.AdamSensorDriver;
@@ -36,12 +34,12 @@ public class AdamOpenGLRenderer implements GLSurfaceView.Renderer {
         // Set the background frame color
         GLES20.glClearColor(0f, 0f, 0f, 1.0f);
 
-        mCamera = new AdamOpenGLCamera();
+        mCamera =  new AdamOpenGLCamera();//new AdamOpenGLARCamera();
         mCamera.setEyeZ(-6);
 
         // initialize a square
         mIcon = new AdamOpenGLIcon();
-        mCamera.Follow(mIcon);
+        //mCamera.Follow(mIcon);
     }
 
     public void onDrawFrame(GL10 gl) {
@@ -51,31 +49,21 @@ public class AdamOpenGLRenderer implements GLSurfaceView.Renderer {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
         // Set the camera position (View matrix)
-        //Matrix.setLookAtM(mVMatrix, 0, 0, 0, -6, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
-        mVMatrix = mCamera.Update();
+       Matrix.setLookAtM(mVMatrix, 0, 0, 0, -6, -2f, 0f, 0f, 0f, 1.0f, 0.0f);
+        //mVMatrix = mCamera.Update();
+        Matrix.setIdentityM(mRotationMatrix, 0);
+
+        /*set default camera, 2 units of the ground,
+        with the up vector pointing positively on the y axis.*/
+
         // Calculate the projection and view transformation
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
+        Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, AdamSensorDriver.rotationMatrix, 0);
 
-        // Draw square
-        //mIcon.draw(mMVPMatrix);
-
-        // Create a rotation for the triangle
-        /*long time = SystemClock.uptimeMillis() % 4000L;
-        float angle = 0.090f * ((int) time);
-        Matrix.setRotateM(mRotationMatrix, 0, angle, 0, 0, -1.0f);*/
-        Matrix.setIdentityM(mRotationMatrix,0);
-        mXChange += .1;
-        Matrix.translateM(mRotationMatrix, 0, mXChange/10, mYChange/10, 0);
+        mIcon.UpdateAndDraw(mMVPMatrix);
+      /*  Matrix.translateM(mRotationMatrix, 0, -mXChange, -mYChange, 0);
         // Combine the rotation matrix with the projection and camera view
         Matrix.multiplyMM(mMVPMatrix, 0, mRotationMatrix, 0, mMVPMatrix, 0);
-
-        // Draw triangle
-        mIcon.draw(mMVPMatrix);
-
-        Matrix.translateM(mRotationMatrix, 0, -mXChange, -mYChange, 0);
-        // Combine the rotation matrix with the projection and camera view
-        Matrix.multiplyMM(mMVPMatrix, 0, mRotationMatrix, 0, mMVPMatrix, 0);
-        // Draw triangle
+        // Draw triangle*/
     }
 
 

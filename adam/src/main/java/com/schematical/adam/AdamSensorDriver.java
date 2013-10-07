@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 /**
  * Created by user1a on 10/6/13.
@@ -16,7 +17,9 @@ public class AdamSensorDriver implements SensorEventListener{
 
     private float[] gravity = new float[3];
     private float[] geomag = new float[3];
-    public static float[] rotationMatrix = new float[16];
+    private int mCount = 0;
+
+    public static final float[] rotationMatrix = new float[16];
 
     protected Context am;
     public AdamSensorDriver(Context nAm){
@@ -41,13 +44,28 @@ public class AdamSensorDriver implements SensorEventListener{
         }
 
         if ((type==Sensor.TYPE_MAGNETIC_FIELD) || (type==Sensor.TYPE_ACCELEROMETER)) {
-            rotationMatrix = new float[16];
-            SensorManager.getRotationMatrix(rotationMatrix, null, gravity, geomag);
+            float[] mRotationMatrix = new float[16];
+            SensorManager.getRotationMatrix(mRotationMatrix, null, gravity, geomag);
             SensorManager.remapCoordinateSystem(
-                    rotationMatrix,
-                    SensorManager.AXIS_Y,
-                    SensorManager.AXIS_MINUS_X,
-                    rotationMatrix );
+                mRotationMatrix,
+                SensorManager.AXIS_X,
+                SensorManager.AXIS_Z,
+                rotationMatrix
+            );
+            float[] mOrientation = new float[16];
+            SensorManager.getOrientation(rotationMatrix, mOrientation);
+            //float incl = SensorManager.getInclination(rotationMatrix);
+
+
+            if (mCount++ > 50) {
+                final float rad2deg = (float)(180.0f/Math.PI);
+                mCount = 0;
+                Log.d("Compass", "yaw: " + (int) (mOrientation[0] * rad2deg) +
+                        "  pitch: " + (int) (mOrientation[1] * rad2deg) +
+                        "  roll: " + (int) (mOrientation[2] * rad2deg) +
+                        "  incl: "// + (int) (incl * rad2deg)
+                );
+            }
         }
 
 
