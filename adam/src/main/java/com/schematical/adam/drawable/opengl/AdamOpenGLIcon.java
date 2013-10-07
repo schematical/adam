@@ -1,6 +1,8 @@
 package com.schematical.adam.drawable.opengl;
 
 import android.opengl.GLES20;
+import android.opengl.Matrix;
+import android.os.SystemClock;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -10,24 +12,23 @@ import java.nio.ShortBuffer;
 /**
  * Created by user1a on 10/6/13.
  */
-public class AdamOpenGLIcon {
+public class AdamOpenGLIcon extends AdamOpenGLDrawable {
     private final String vertexShaderCode =
             // This matrix member variable provides a hook to manipulate
             // the coordinates of the objects that use this vertex shader
             "uniform mat4 uMVPMatrix;" +
-
-                    "attribute vec4 vPosition;" +
-                    "void main() {" +
-                    // the matrix must be included as a modifier of gl_Position
-                    "  gl_Position = vPosition * uMVPMatrix;" +
-                    "}";
+            "attribute vec4 vPosition;" +
+            "void main() {" +
+            // the matrix must be included as a modifier of gl_Position
+                    "  gl_Position = uMVPMatrix * vPosition;" + //"  gl_Position = vPosition * uMVPMatrix;" +
+            "}";
 
     private final String fragmentShaderCode =
             "precision mediump float;" +
-                    "uniform vec4 vColor;" +
-                    "void main() {" +
-                    "  gl_FragColor = vColor;" +
-                    "}";
+            "uniform vec4 vColor;" +
+            "void main() {" +
+            "  gl_FragColor = vColor;" +
+            "}";
 
     private final FloatBuffer vertexBuffer;
     private final ShortBuffer drawListBuffer;
@@ -35,6 +36,7 @@ public class AdamOpenGLIcon {
     private int mPositionHandle;
     private int mColorHandle;
     private int mMVPMatrixHandle;
+
 
     // number of coordinates per vertex in this array
     static final int COORDS_PER_VERTEX = 3;
@@ -45,7 +47,9 @@ public class AdamOpenGLIcon {
             0.5f,  0.5f, 0.0f }; // top right
 
     private final short drawOrder[] = { 0, 1, 2, 0, 2, 3 }; // order to draw vertices
-
+    private final float[] mModelMatrix = new float[16];
+    private float[] mTempMatrix = new float[16];
+    private final float[] mRotationMatrix = new float[16];
     private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
 
     // Set color with red, green, blue and alpha (opacity) values
@@ -79,6 +83,16 @@ public class AdamOpenGLIcon {
         GLES20.glAttachShader(mProgram, fragmentShader); // add the fragment shader to program
         GLES20.glLinkProgram(mProgram);                  // creates OpenGL ES program executables
 
+    }
+    public void UpdateAndDraw(float[] mvpMatrix){
+        mTempMatrix = mvpMatrix.clone();
+        Matrix.setIdentityM(mModelMatrix, 0);
+        Matrix.translateM(mModelMatrix, 0, getX(), getY(), getZ());
+        //x += 1;
+        // Combine the rotation matrix with the projection and camera view
+        Matrix.multiplyMM(mModelMatrix, 0, mTempMatrix, 0, mModelMatrix, 0);
+        draw(mModelMatrix);
+        Matrix.translateM(mModelMatrix, 0, getX() * -1, getY() * -1, getZ() * -1);
     }
     public void draw(float[] mvpMatrix) {
 

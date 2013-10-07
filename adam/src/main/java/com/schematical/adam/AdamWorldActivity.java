@@ -12,6 +12,7 @@ import com.schematical.adam.drawable.opengl.AdamOpenGLView;
 public class AdamWorldActivity extends Activity {
     private GLSurfaceView mGLView;
     private AdamSensorDriver sensorDriver;
+    private AdamSaveDriver saveDriver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
