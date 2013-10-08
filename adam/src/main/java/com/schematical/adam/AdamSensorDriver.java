@@ -40,16 +40,16 @@ public class AdamSensorDriver implements SensorEventListener{
 
     public void onSensorChanged(SensorEvent evt) {
         int type=evt.sensor.getType();
-
+        Float weight = 10f;
         //Smoothing the sensor data a bit
         if (type == Sensor.TYPE_MAGNETIC_FIELD) {
-            geomag[0]=(geomag[0]*1+evt.values[0])*0.5f;
-            geomag[1]=(geomag[1]*1+evt.values[1])*0.5f;
-            geomag[2]=(geomag[2]*1+evt.values[2])*0.5f;
+            geomag[0]=(geomag[0]*weight+evt.values[0])/(weight+1);
+            geomag[1]=(geomag[1]*weight+evt.values[1])/(weight+1);
+            geomag[2]=(geomag[2]*weight+evt.values[2])/(weight+1);
         } else if (type == Sensor.TYPE_ACCELEROMETER) {
-            gravity[0]=(gravity[0]*2+evt.values[0])*0.33334f;
-            gravity[1]=(gravity[1]*2+evt.values[1])*0.33334f;
-            gravity[2]=(gravity[2]*2+evt.values[2])*0.33334f;
+            gravity[0]=(gravity[0]*weight+evt.values[0])/(weight+1);
+            gravity[1]=(gravity[1]*weight+evt.values[1])/(weight+1);
+            gravity[2]=(gravity[2]*weight+evt.values[2])/(weight+1);
         }
 
         if ((type==Sensor.TYPE_MAGNETIC_FIELD) || (type==Sensor.TYPE_ACCELEROMETER)) {
@@ -96,7 +96,7 @@ public class AdamSensorDriver implements SensorEventListener{
     }
 
     public static Double getCurrYaw() {
-        return currYaw;
+        return Math.PI*.7;//currYaw;
     }
 
     public static Double getCurrPitch() {

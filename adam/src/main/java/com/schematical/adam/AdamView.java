@@ -195,8 +195,7 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
         mCanvas = canvas;
         super.onDraw(canvas);
 
-        //Draw radar
-        mRadar.Draw(canvas, xAngle, yAngle, zAngle);
+
 
         AdamActivityMain am = ((AdamActivityMain) getContext());
         AdamObject objNFocused = null;

@@ -1,6 +1,7 @@
 package com.schematical.adam.vmap;
 
 import android.location.Location;
+import android.util.Log;
 
 import com.schematical.adam.location.AdamLocation;
 
@@ -50,6 +51,7 @@ public class AdamVisualMapPoint {
         Double realX = x + gX;
         Double realY = y + gY;
         Double realZ = z + location.getAltitude();
+
         Location rLocation = AdamLocation.GetGeoLocationFromMetersXY(realX, realY);
         rLocation.setAccuracy(location.getAccuracy());
         rLocation.setAltitude(realZ);

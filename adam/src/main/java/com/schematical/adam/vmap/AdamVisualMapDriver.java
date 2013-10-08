@@ -19,8 +19,9 @@ public class AdamVisualMapDriver {
         return map;
     }
     public static Double GetEstimatedDistanceToFloorPoint(){
-        Log.d("adam", "Pitch:" + ((Math.PI/2)-AdamSensorDriver.getCurrPitch() /Math.PI * 180));
+
         Double distX = DEFAULT_EYE_HEIGHT * Math.tan((Math.PI/2)-AdamSensorDriver.getCurrPitch());
+
         return distX;
     }
     public static AdamVisualMapPoint GetLocationOfFloorPoint(){
@@ -28,8 +29,8 @@ public class AdamVisualMapDriver {
         Double cZ = -1 * DEFAULT_EYE_HEIGHT;//The distance from the floor point is always the eye height below the measuring device
 
         Double yaw = AdamSensorDriver.getCurrYaw();
-        Double cY = Math.cos(yaw) * distX;
-        Double cX = Math.sin(yaw) * distX;
+        Double cX = Math.cos(yaw) * distX;
+        Double cY = Math.sin(yaw) * distX;
 
         AdamVisualMapPoint ap = new AdamVisualMapPoint(
             cX,

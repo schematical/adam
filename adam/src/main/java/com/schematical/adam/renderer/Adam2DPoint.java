@@ -1,5 +1,7 @@
 package com.schematical.adam.renderer;
 
+import com.schematical.adam.drawable.AdamRadar;
+
 /**
  * Created by user1a on 10/8/13.
  */
@@ -10,6 +12,9 @@ public class Adam2DPoint {
     protected Double scale;
 
 
+
+    protected Double topX;
+    protected Double topY;
 
     protected Double metaAngle;
     protected Double metaDistance;
@@ -43,5 +48,21 @@ public class Adam2DPoint {
 
     public void setMetaDistance(Double metaDistance) {
         this.metaDistance = metaDistance;
+    }
+
+    public Double getTopX(Double distance) {
+        return topX * ((this.metaDistance/AdamRadar.DEFAULT_MAX_DIST)* distance);
+    }
+
+    public void setTopX(Double topX) {
+        this.topX = topX;
+    }
+
+    public Double getTopY(Double distance) {
+        return topY * ((this.metaDistance/AdamRadar.DEFAULT_MAX_DIST) * distance);
+    }
+
+    public void setTopY(Double topY) {
+        this.topY = topY;
     }
 }

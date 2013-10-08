@@ -109,7 +109,7 @@ abstract public class AdamDrawable implements iAdamDrawable{
         return left;
     }
 
-    public void setLeft(int left) {
+    public void setLeft(Integer left) {
         this.left = left;
     }
 
@@ -117,7 +117,7 @@ abstract public class AdamDrawable implements iAdamDrawable{
         return right;
     }
 
-    public void setRight(int right) {
+    public void setRight(Integer right) {
         this.right = right;
     }
 

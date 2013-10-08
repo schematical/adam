@@ -14,6 +14,10 @@ public class AdamStackablePercentField extends AdamStackable{
     protected Method method;
 
 
+
+    protected Integer outOf = 100;
+
+
     protected String units = "%";
 
 
@@ -76,7 +80,7 @@ public class AdamStackablePercentField extends AdamStackable{
         if(dResult.equals(Double.POSITIVE_INFINITY)){
             txt = "N/A";
         }else{
-            txt += ((Long)Math.round(dResult * 100)).toString() + this.units;
+            txt += ((Long)Math.round(dResult * outOf)).toString() + this.units;
         }
         canvas.drawText(
             txt,
@@ -98,6 +102,13 @@ public class AdamStackablePercentField extends AdamStackable{
 
     public void setUnits(String units) {
         this.units = units;
+    }
+    public Integer getOutOf() {
+        return outOf;
+    }
+
+    public void setOutOf(Integer outOf) {
+        this.outOf = outOf;
     }
 
 }

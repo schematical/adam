@@ -8,8 +8,15 @@ import android.view.View;
 
 import com.schematical.adam.AdamActivityMain;
 import com.schematical.adam.AdamObject;
+import com.schematical.adam.AdamSensorDriver;
 import com.schematical.adam.AdamView;
 import com.schematical.adam.drawable.AdamDrawable;
+import com.schematical.adam.drawable.opengl.AdamOpenGLIcon;
+import com.schematical.adam.location.AdamLocation;
+import com.schematical.adam.renderer.Adam2DPoint;
+import com.schematical.adam.renderer.Adam3DEngine;
+import com.schematical.adam.vmap.AdamVisualMapDriver;
+import com.schematical.adam.vmap.AdamVisualMapPoint;
 
 import java.lang.reflect.Method;
 import java.util.Enumeration;
@@ -21,6 +28,7 @@ import java.util.Hashtable;
 public class AdamRadar extends AdamDrawable {
     public static final double DEFAULT_MAX_DIST = 100;
     private final AdamStackablePercentField txtAccuracy;
+    private AdamIcon cursor;
 
 
     protected boolean blnFullScreen = false;
@@ -37,7 +45,9 @@ public class AdamRadar extends AdamDrawable {
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
-
+        cursor = new AdamIcon(this, AdamIcon.bullseye);
+        cursor.setWidth(50);
+        cursor.setHeight(50);
     }
     public Double GetAccuracy(){
         Location objLocation = ((AdamActivityMain)av.getContext()).GetLocation();
@@ -60,10 +70,7 @@ public class AdamRadar extends AdamDrawable {
         }
     }
 
-    public void Draw(Canvas canvas, double xAngle, double yAngle, double zAngle){
-
-
-
+    public void Draw(Canvas canvas){
 
         int middleX = this.getX() + width/2 ;
         int middleY = this.getY() + width/2;
@@ -92,17 +99,42 @@ public class AdamRadar extends AdamDrawable {
 
         paint.setStyle(Paint.Style.FILL);
 
-
+        Double yaw = AdamSensorDriver.getCurrYaw();
         canvas.drawText(
                 "N",
-                Math.round(middleX + Math.cos(xAngle) * width/2),
-                Math.round(middleY + Math.sin(xAngle) * height/2),
+                Math.round(middleX + Math.cos(yaw) * width/2),
+                Math.round(middleY + Math.sin(yaw) * height/2),
                 paint
         );
         DrawAdamObjects(canvas, width, height);
         DrawStackable(canvas);
+        DrawCursor(canvas);
 
+    }
+    public void DrawCursor(Canvas canvas){
+        //For now lets just draw a an icon at the distance point
+        AdamVisualMapPoint ap = AdamVisualMapDriver.GetLocationOfFloorPoint();
 
+        //Log.d("adam", "x:" + ap.getX() + "  y: " + ap.getY() + " z: " + ap.getZ());
+        Location rp = ap.getGeoLocation(AdamLocation.GetLocation());
+
+        Adam2DPoint a2dPoint = Adam3DEngine.Get2DPos(canvas, rp);
+
+        //Log.d("adam", a2dPoint.getX() + "/" + a2dPoint.getY());
+        Double yaw = AdamSensorDriver.getCurrYaw();
+        double radius = a2dPoint.getMetaDistance() / AdamRadar.DEFAULT_MAX_DIST * (this.height/2);
+        Long bigX  = Math.round( (Math.cos(a2dPoint.getMetaAngle() - yaw) *  radius)+ getCenterX()- cursor.width/2);
+        Long bigY =  Math.round( (Math.sin(a2dPoint.getMetaAngle() - yaw)  * radius) + getCenterY()- cursor.height/2);
+        cursor.setLeft(bigX.intValue());
+        cursor.setTop(bigY.intValue());
+        //cursor.setHeight(((Long)Math.round(a2dPoint.getScale() * 140)).intValue());
+        cursor.Draw(canvas);
+    }
+    public Integer getCenterX(){
+        return this.getX() + (this.getWidth()/2);
+    }
+    public Integer getCenterY(){
+        return this.getY() + (this.getHeight()/2);
     }
     public void DrawStackable(Canvas canvas){
         Enumeration<String> keys = children.keys();

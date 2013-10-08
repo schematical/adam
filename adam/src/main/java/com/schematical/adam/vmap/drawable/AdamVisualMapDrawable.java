@@ -5,6 +5,7 @@ import android.location.Location;
 import android.nfc.Tag;
 import android.util.Log;
 
+import com.schematical.adam.AdamSensorDriver;
 import com.schematical.adam.drawable.AdamStackablePercentField;
 import com.schematical.adam.drawable.AdamStackableTextField;
 import com.schematical.adam.location.AdamLocation;
@@ -30,6 +31,7 @@ public class AdamVisualMapDrawable extends AdamDrawable {
         txtDistance = new AdamStackablePercentField(cursor);
         txtDistance.setName("Distance");
         txtDistance.setUnits("m");
+        txtDistance.setOutOf(1);
         try {
             Method m = AdamVisualMapDriver.class.getMethod("GetEstimatedDistanceToFloorPoint");
             txtDistance.Follow(AdamVisualMapDriver.class, m);
@@ -40,6 +42,8 @@ public class AdamVisualMapDrawable extends AdamDrawable {
     public void Draw(Canvas canvas){
         //For now lets just draw a an icon at the distance point
         AdamVisualMapPoint ap = AdamVisualMapDriver.GetLocationOfFloorPoint();
+
+        //Log.d("adam", "x:" + ap.getX() + "  y: " + ap.getY() + " z: " + ap.getZ());
         Location rp = ap.getGeoLocation(AdamLocation.GetLocation());
 
         Adam2DPoint a2dPoint = Adam3DEngine.Get2DPos(canvas, rp);
