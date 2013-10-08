@@ -1,4 +1,4 @@
-package com.schematical.adam;
+package com.schematical.adam.location;
 
 import android.content.Context;
 import android.location.Location;
@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
+import com.schematical.adam.AdamActivityMain;
 
 import java.util.Hashtable;
 
@@ -17,12 +18,12 @@ import java.util.Hashtable;
  */
 public class AdamLocation  implements LocationListener, GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener {
-    protected double lat_t = 0;
-    protected double lng_t = 0;
-    protected double altitude_t = 0;
-    protected double accuracy_t = 0;
-    protected double weight_t = 0;
-    protected double measure_ct = 0;
+    protected static double lat_t = 0;
+    protected static double lng_t = 0;
+    protected static double altitude_t = 0;
+    protected static double accuracy_t = 0;
+    protected static double weight_t = 0;
+    protected static double measure_ct = 0;
 
     protected AdamActivityMain am;
 
@@ -39,15 +40,20 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
     }
 
 
-    public Location GetLocation(){
-        if(this.lat_t ==0){
-            return null;
-        }
+    public static Location GetLocation(){
         Location nLocation = new Location("gps");
-        nLocation.setLatitude(this.lat_t / this.weight_t);
-        nLocation.setLongitude(this.lng_t / this.weight_t);
-        nLocation.setAltitude(this.altitude_t/this.weight_t);
-        nLocation.setAccuracy(Math.round(1/(this.weight_t/this.measure_ct)));
+        if(lat_t ==0){
+            nLocation.setLatitude(43);
+            nLocation.setLongitude(-81);
+            nLocation.setAltitude(0);
+            nLocation.setAccuracy(Float.POSITIVE_INFINITY);
+            return nLocation;
+        }
+
+        nLocation.setLatitude(lat_t / weight_t);
+        nLocation.setLongitude(lng_t / weight_t);
+        nLocation.setAltitude(altitude_t/weight_t);
+        nLocation.setAccuracy(Math.round(1/(weight_t/measure_ct)));
 
         return nLocation;
     }
@@ -88,6 +94,18 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
         rData.put("y", resultY);
         return rData;
     }
+    public static Location GetGeoLocationFromMetersXY(Double xMeters, Double yMeters){
+
+        Double fltLat =  yMeters / (40008000 / 360);
+        Double latitudeCircumference = 40075160 * Math.cos(fltLat / 180 * Math.PI);
+
+        Double fltLong = xMeters/(latitudeCircumference / 360);
+        Location rLocation = new Location("gps");
+        rLocation.setLatitude(fltLat);
+        rLocation.setLongitude(fltLong);
+        return rLocation;
+    }
+
     public static float distFrom(float lat1, float lng1, float lat2, float lng2) {
         double earthRadius = 3958.75;
         double dLat = Math.toRadians(lat2-lat1);

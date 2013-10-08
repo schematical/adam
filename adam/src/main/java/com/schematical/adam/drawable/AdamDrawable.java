@@ -155,6 +155,9 @@ abstract public class AdamDrawable implements iAdamDrawable{
        }
     }
     public void DrawBitmap(Canvas canvas, Bitmap bm){
+        if(width < 1 || height < 1){
+            return;
+        }
         DrawBitmap(
             canvas,
             bm,

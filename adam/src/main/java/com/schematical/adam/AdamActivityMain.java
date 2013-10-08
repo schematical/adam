@@ -1,38 +1,19 @@
 package com.schematical.adam;
 
 
-import android.content.Context;
-import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.hardware.Camera;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.location.Location;
-import android.location.LocationListener;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
-import android.net.wifi.WifiManager;
-import android.net.wifi.ScanResult;
-import android.content.BroadcastReceiver;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-import android.location.LocationManager;
 
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.schematical.adam.img.AdamImgRecDriver;
+import com.schematical.adam.location.AdamLocation;
 import com.schematical.adam.tts.AdamTTSDriver;
 
 import java.util.Enumeration;
@@ -84,7 +65,7 @@ public class AdamActivityMain extends Activity {
         // Create an instance of Camera
 
         saveDriver = new AdamSaveDriver(this);
-        saveDriver.Load();
+        //saveDriver.Load();
         // Create our Preview view and set it as the content of our activity.
         mCamera = getCameraInstance();
         imgRecDriver = new AdamImgRecDriver(this);

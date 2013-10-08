@@ -6,6 +6,8 @@ import android.graphics.Typeface;
 
 import com.schematical.adam.AdamView;
 
+import java.util.Enumeration;
+
 /**
  * Created by user1a on 10/6/13.
  */
@@ -68,5 +70,20 @@ public class AdamIcon extends AdamDrawable{
             this.getY() + Math.round(this.height*.66),
             paint
         );
+
+        Enumeration<String> keys = children.keys();
+        int intNextY = getY();
+        while(keys.hasMoreElements()){
+            String key = keys.nextElement();
+            AdamDrawable ad =  this.children.get(key);
+
+            if(ad instanceof AdamStackable){
+                ad.setTop(intNextY);
+                ad.setLeft(this.getX() + this.width + this.padding);
+                ad.Draw(canvas);
+                intNextY += ad.getHeight() + this.padding;
+            }
+        }
+
     }
 }

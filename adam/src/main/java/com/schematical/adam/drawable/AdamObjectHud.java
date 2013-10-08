@@ -48,58 +48,11 @@ public class AdamObjectHud extends AdamIcon {
         currX = -200;
         currY = -200;
     }
-   /* public void Draw(Canvas canvas){
-        Location newLocation = new Location("gps");
-        Location oLocation = ((AdamActivityMain)av.getContext()).GetLocation();
-        newLocation.setLatitude(ao.GetLat());
-        newLocation.setLongitude(ao.GetLng());
-        newLocation.setAltitude(oLocation.getAltitude());
 
-        newLocation.setAccuracy(3.0f);
-        float cDist = oLocation.distanceTo(newLocation);
-
-        currX = Math.round(currX + goalX)/2;
-        currY = Math.round(currY + goalY)/2;
-
-
-        canvas.drawBitmap(
-                av.icon,
-                currX,
-                currY,
-                bg_paint
-        );
-
-        //paint.setTextSize(Math.round(40/cDist));
-        Typeface tf= Typeface.createFromAsset(av.getContext().getAssets(), "font/fontawesome-webfont.ttf");
-        paint.setTypeface(tf);
-        paint.setColor(0xffffffff);
-        paint.setTextSize(20);
-        StringBuilder sb = new StringBuilder();
-        sb.append(0xf09e);
-        canvas.drawText(
-                sb.toString(),
-                currX,
-                currY,
-                paint
-        );
-        *//*
-        canvas.drawText(
-                ao.GetAlias(),
-                currX,
-                currY,
-                paint
-        );
-
-        canvas.drawText(
-                "Dist:" + Float.toString(cDist),
-                currX,
-                currY + 45,
-                paint
-        );*//*
-
-    }*/
-    public void SetGoalXY(int nGoalX, int nGoalY, Double distance){
+    public void SetGoalXY(int nGoalX, int nGoalY, Double nScale){
         goalX = nGoalX;
         goalY = nGoalY;
+        this.height = ((Long)Math.round(140 * nScale)).intValue();
+
     }
 }

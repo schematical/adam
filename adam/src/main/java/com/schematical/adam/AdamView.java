@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.hardware.Camera;
 import android.location.Location;
+import android.os.Vibrator;
 import android.util.Log;
 
 import android.view.*;
@@ -20,6 +21,9 @@ import com.schematical.adam.drawable.AdamObjectHud;
 import com.schematical.adam.drawable.AdamObjectMiniProfile;
 import com.schematical.adam.drawable.AdamRadar;
 import com.schematical.adam.drawable.iAdamDrawable;
+import com.schematical.adam.renderer.Adam2DPoint;
+import com.schematical.adam.renderer.Adam3DEngine;
+import com.schematical.adam.vmap.drawable.AdamVisualMapDrawable;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -48,6 +52,7 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
     public AdamDPad rDPad;
     private boolean targetIsLocked = false;
     private AdamObject objFocused;
+    protected AdamVisualMapDrawable visualMap;
 
 
     public AdamView(Context context, Camera camera) {
@@ -59,6 +64,7 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
         mRadar.setTop(20);
         mRadar.setRight(20);
         ah = new AdamHud(this);
+
 
 
         this.InitRightDPad();
@@ -75,9 +81,12 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
         // deprecated setting, but required on Android versions prior to 3.0
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         setWillNotDraw(false);
+        InitMapMode();
 
     }
-
+    private void InitMapMode(){
+        visualMap = new AdamVisualMapDrawable(this);
+    }
     private void InitRightDPad() {
         rDPad = new AdamDPad(this);
         rDPad.setBottom(20);
@@ -112,6 +121,16 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
 
         });
         rDPad.setDRight(dRight);
+
+        AdamDPadKey dUp =new AdamDPadKey(this, AdamIcon.home);
+        dUp.setActionParameter("menu");
+        dUp.setAction(new AdamAction() {
+            public void Exicute(Object actionParameter, AdamDrawable control){
+
+            }
+
+        });
+        rDPad.setDUp(dUp);
     }
 
     private void toggleTargetLock() {
@@ -137,7 +156,7 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
         float x = event.getX();
         float y = event.getY();
         Enumeration<String> keys = controls.keys();
-
+        boolean touchEvenFired = false;
         while(keys.hasMoreElements()){
             String key = keys.nextElement();
             AdamDrawable ad = (AdamDrawable) controls.get(key);
@@ -148,8 +167,15 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
                 (ad.getY() + ad.getHeight() > y)
             ){
                 ad.onTouch(v, event);
+                touchEvenFired = true;
             }
 
+        }
+
+        if(touchEvenFired){
+            Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+
+            vibrator.vibrate(200);
         }
         return false;
     }
@@ -172,11 +198,8 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
         //Draw radar
         mRadar.Draw(canvas, xAngle, yAngle, zAngle);
 
-
-
-
         AdamActivityMain am = ((AdamActivityMain) getContext());
-
+        AdamObject objNFocused = null;
         Location mLocation = am.GetLocation();
         if(mLocation != null){
 
@@ -195,43 +218,26 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
 
                 if(mObject.GetLng() != 0){
                     Location mObjLoc = mObject.GetLocation();
-                    double distance = mLocation.distanceTo(mObjLoc);
-                    double alt_diff = mLocation.getAltitude() - mObjLoc.getAltitude();
-                    double baring = mLocation.bearingTo(mObjLoc);
-                    double mObjectRelitiveAngle = (baring/180) * Math.PI;
-
-                    //double mObjectRelitiveAngle = Math.atan(mLocation.getLongitude() - mObjLoc.getLongitude() / (mLocation.getLatitude() - mObjLoc.getLatitude()));
-
-                    double mObjectAngleDiff = mObjectRelitiveAngle + xAngle;
-
-                    double bigX = Math.cos(mObjectAngleDiff + Math.PI) * canvas.getWidth();
-                    double bigY = Math.sin(mObjectAngleDiff + Math.PI) * canvas.getHeight();
-                    mObject.Radar().SetRadarXY(mObjectAngleDiff, distance);
-                    double screenX = bigX + canvas.getWidth()/2;
-                    double nYAngle = alt_diff/distance  + yAngle;
-                    double screenY = (-1 *(Math.sin(nYAngle) * canvas.getHeight())) + (canvas.getHeight()/2);
+                    Adam2DPoint aPoint = Adam3DEngine.Get2DPos(canvas, mObjLoc);
 
 
-                    //Figure out how wide the angle of view seen by the camera is
-                    double viewWidth = Math.PI/2;
-                    //First determin if it is in the view range
 
-
+                    mObject.Radar().SetRadarXY(aPoint.getMetaAngle(), aPoint.getMetaDistance());
 
                     AdamObjectHud objHud = mObject.Hud();
 
 
-                    if(bigY > 0 ){
+                    if(aPoint.getY() > 0 ){
                         objHud.SetGoalXY(
-                            (int) Math.round(screenX),
-                            (int) Math.round(screenY),
-                            distance
+                            (int) Math.round(aPoint.getX()),
+                            (int) Math.round(aPoint.getY()),
+                            aPoint.getScale()
                         );
                         if(!this.targetIsLocked){
-                            currFocusXDiff = Math.abs(screenX - canvas.getWidth()/2);
+                            currFocusXDiff = Math.abs(aPoint.getX() - canvas.getWidth()/2);
                             if(currFocusXDiff < lastFocusXDiff){
                                 lastFocusXDiff = currFocusXDiff;
-                                objFocused = objHud.getAdamObject();
+                                objNFocused = objHud.getAdamObject();
                             }
                         }
 
@@ -243,7 +249,13 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
                 }
 
             }
+            if(objNFocused != null && !objNFocused.equals(objFocused)){
+                //Trigger highlight effect
+
+            }
         }
+
+
         //objFocused = ((AdamActivityMain)getContext()).GetAdamObject("100 State");
         Enumeration<String> keys = controls.keys();
 

@@ -22,6 +22,15 @@ public class AdamSensorDriver implements SensorEventListener{
     public static final float[] rotationMatrix = new float[16];
     public static final float[] inclinationMatrix = new float[16];
     protected Context am;
+
+
+
+    protected static Double currYaw;
+    protected static Double currPitch;
+    protected static Double currRoll;
+    protected static Double currIncline;
+
+
     public AdamSensorDriver(Context nAm){
         am = nAm;
         mSensorManager = (SensorManager) am.getSystemService(Context.SENSOR_SERVICE);
@@ -57,30 +66,18 @@ public class AdamSensorDriver implements SensorEventListener{
             float incl = SensorManager.getInclination(inclinationMatrix);
 
 
-            /*if (mCount++ > 50) {
-                final float rad2deg = (float)(180.0f/Math.PI);
-                mCount = 0;
-                Log.d("Compass", "yaw: " + (int) (mOrientation[0] * rad2deg) +
-                        "  pitch: " + (int) (mOrientation[1] * rad2deg) +
-                        "  roll: " + (int) (mOrientation[2] * rad2deg) +
-                        "  incl: " + (int) (incl * rad2deg)
-                );
-            }*/
-            ((AdamActivityMain)am).GetView().UpdateOrientation(mOrientation[0], mOrientation[1], mOrientation[2]);
+
+            currYaw =((Float) mOrientation[0]).doubleValue();
+            currPitch = ((Float)mOrientation[1]).doubleValue();
+            currRoll = ((Float)mOrientation[2]).doubleValue();
+            currIncline = ((Float)incl).doubleValue();
+
         }
 
 
     }
 
 
-    /* public void onSensorChanged(SensorEvent event) {
-
-        double xAngle = (event.values[0]/180) * Math.PI;// * Math.PI / 2;
-        double yAngle = (event.values[1]/180)  * Math.PI;// * Math.PI / 2;
-        double zAngle = (event.values[2]/180) * Math.PI;// * Math.PI / 2;
-
-        am.GetView().UpdateOrientation(xAngle, yAngle, zAngle);
-    }*/
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
@@ -98,6 +95,21 @@ public class AdamSensorDriver implements SensorEventListener{
         mSensorManager.unregisterListener(this);
     }
 
+    public static Double getCurrYaw() {
+        return currYaw;
+    }
+
+    public static Double getCurrPitch() {
+        return currPitch;
+    }
+
+    public static Double getCurrRoll() {
+        return currRoll;
+    }
+
+    public static Double getCurrIncline() {
+        return currIncline;
+    }
 
 
 
