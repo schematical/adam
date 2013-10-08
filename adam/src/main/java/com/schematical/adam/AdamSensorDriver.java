@@ -20,7 +20,7 @@ public class AdamSensorDriver implements SensorEventListener{
     private int mCount = 0;
 
     public static final float[] rotationMatrix = new float[16];
-
+    public static final float[] inclinationMatrix = new float[16];
     protected Context am;
     public AdamSensorDriver(Context nAm){
         am = nAm;
@@ -45,7 +45,7 @@ public class AdamSensorDriver implements SensorEventListener{
 
         if ((type==Sensor.TYPE_MAGNETIC_FIELD) || (type==Sensor.TYPE_ACCELEROMETER)) {
             float[] mRotationMatrix = new float[16];
-            SensorManager.getRotationMatrix(mRotationMatrix, null, gravity, geomag);
+            SensorManager.getRotationMatrix(mRotationMatrix, inclinationMatrix, gravity, geomag);
             SensorManager.remapCoordinateSystem(
                 mRotationMatrix,
                 SensorManager.AXIS_X,
@@ -54,18 +54,19 @@ public class AdamSensorDriver implements SensorEventListener{
             );
             float[] mOrientation = new float[16];
             SensorManager.getOrientation(rotationMatrix, mOrientation);
-            //float incl = SensorManager.getInclination(rotationMatrix);
+            float incl = SensorManager.getInclination(inclinationMatrix);
 
 
-            if (mCount++ > 50) {
+            /*if (mCount++ > 50) {
                 final float rad2deg = (float)(180.0f/Math.PI);
                 mCount = 0;
                 Log.d("Compass", "yaw: " + (int) (mOrientation[0] * rad2deg) +
                         "  pitch: " + (int) (mOrientation[1] * rad2deg) +
                         "  roll: " + (int) (mOrientation[2] * rad2deg) +
-                        "  incl: "// + (int) (incl * rad2deg)
+                        "  incl: " + (int) (incl * rad2deg)
                 );
-            }
+            }*/
+            ((AdamActivityMain)am).GetView().UpdateOrientation(mOrientation[0], mOrientation[1], mOrientation[2]);
         }
 
 

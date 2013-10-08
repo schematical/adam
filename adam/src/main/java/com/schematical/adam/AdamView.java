@@ -184,6 +184,8 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
             Hashtable<String, AdamObject> mObjects = am.GetAdamObjects();
             Enumeration names = mObjects.keys();
             String objId = null;
+            double lastFocusXDiff = Double.POSITIVE_INFINITY;
+            double currFocusXDiff = 0;
             while(names.hasMoreElements()) {
                 objId = (String) names.nextElement();
 
@@ -194,6 +196,7 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
                 if(mObject.GetLng() != 0){
                     Location mObjLoc = mObject.GetLocation();
                     double distance = mLocation.distanceTo(mObjLoc);
+                    double alt_diff = mLocation.getAltitude() - mObjLoc.getAltitude();
                     double baring = mLocation.bearingTo(mObjLoc);
                     double mObjectRelitiveAngle = (baring/180) * Math.PI;
 
@@ -205,7 +208,9 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
                     double bigY = Math.sin(mObjectAngleDiff + Math.PI) * canvas.getHeight();
                     mObject.Radar().SetRadarXY(mObjectAngleDiff, distance);
                     double screenX = bigX + canvas.getWidth()/2;
-                    double screenY = canvas.getHeight()/2; //Math.sin(yAngle) * canvas.getHeight();
+                    double nYAngle = alt_diff/distance  + yAngle;
+                    double screenY = (-1 *(Math.sin(nYAngle) * canvas.getHeight())) + (canvas.getHeight()/2);
+
 
                     //Figure out how wide the angle of view seen by the camera is
                     double viewWidth = Math.PI/2;
@@ -215,15 +220,15 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
 
                     AdamObjectHud objHud = mObject.Hud();
 
-                    double lastFocusXDiff = Double.POSITIVE_INFINITY;
 
                     if(bigY > 0 ){
                         objHud.SetGoalXY(
                             (int) Math.round(screenX),
-                            (int) Math.round(screenY)
+                            (int) Math.round(screenY),
+                            distance
                         );
                         if(!this.targetIsLocked){
-                            double currFocusXDiff = Math.abs(screenX - canvas.getWidth()/2);
+                            currFocusXDiff = Math.abs(screenX - canvas.getWidth()/2);
                             if(currFocusXDiff < lastFocusXDiff){
                                 lastFocusXDiff = currFocusXDiff;
                                 objFocused = objHud.getAdamObject();

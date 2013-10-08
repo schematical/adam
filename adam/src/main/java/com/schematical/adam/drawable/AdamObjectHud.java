@@ -98,7 +98,7 @@ public class AdamObjectHud extends AdamIcon {
         );*//*
 
     }*/
-    public void SetGoalXY(int nGoalX, int nGoalY){
+    public void SetGoalXY(int nGoalX, int nGoalY, Double distance){
         goalX = nGoalX;
         goalY = nGoalY;
     }
