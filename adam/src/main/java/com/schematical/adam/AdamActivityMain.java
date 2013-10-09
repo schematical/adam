@@ -65,7 +65,7 @@ public class AdamActivityMain extends Activity {
         // Create an instance of Camera
 
         saveDriver = new AdamSaveDriver(this);
-        //saveDriver.Load();
+        saveDriver.Load();
         // Create our Preview view and set it as the content of our activity.
         mCamera = getCameraInstance();
         imgRecDriver = new AdamImgRecDriver(this);

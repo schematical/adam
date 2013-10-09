@@ -43,8 +43,8 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
     public static Location GetLocation(){
         Location nLocation = new Location("gps");
         if(lat_t ==0){
-            nLocation.setLatitude(43);
-            nLocation.setLongitude(-81);
+            nLocation.setLatitude(43.074785782963);
+            nLocation.setLongitude(-89.38710576539);
             nLocation.setAltitude(0);
             nLocation.setAccuracy(Float.POSITIVE_INFINITY);
             return nLocation;

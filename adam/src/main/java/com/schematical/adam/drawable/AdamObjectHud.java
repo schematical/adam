@@ -53,6 +53,7 @@ public class AdamObjectHud extends AdamIcon {
         goalX = nGoalX;
         goalY = nGoalY;
         this.height = ((Long)Math.round(140 * nScale)).intValue();
+        this.width = ((Long)Math.round(140 * nScale)).intValue();
 
     }
 }

@@ -23,6 +23,7 @@ import com.schematical.adam.drawable.AdamRadar;
 import com.schematical.adam.drawable.iAdamDrawable;
 import com.schematical.adam.renderer.Adam2DPoint;
 import com.schematical.adam.renderer.Adam3DEngine;
+import com.schematical.adam.vmap.AdamVisualMapDriver;
 import com.schematical.adam.vmap.drawable.AdamVisualMapDrawable;
 
 import java.io.IOException;
@@ -126,7 +127,7 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
         dUp.setActionParameter("menu");
         dUp.setAction(new AdamAction() {
             public void Exicute(Object actionParameter, AdamDrawable control){
-
+                AdamVisualMapDriver.AddFloorPointAtCurrOrientation();
             }
 
         });
@@ -221,12 +222,12 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
 
 
 
-                    mObject.Radar().SetRadarXY(aPoint.getMetaAngle(), aPoint.getMetaDistance());
+                    mObject.Radar().SetRadarXY(aPoint.getMetaAngle() - AdamSensorDriver.getCurrYaw(), aPoint.getMetaDistance());
 
                     AdamObjectHud objHud = mObject.Hud();
 
 
-                    if(aPoint.getY() > 0 ){
+                    if(aPoint.getTopY() > 0 ){
                         objHud.SetGoalXY(
                             (int) Math.round(aPoint.getX()),
                             (int) Math.round(aPoint.getY()),
@@ -250,7 +251,7 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
             }
             if(objNFocused != null && !objNFocused.equals(objFocused)){
                 //Trigger highlight effect
-
+                objFocused = objNFocused;
             }
         }
 

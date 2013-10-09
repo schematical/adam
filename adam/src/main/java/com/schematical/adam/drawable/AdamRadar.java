@@ -100,12 +100,15 @@ public class AdamRadar extends AdamDrawable {
         paint.setStyle(Paint.Style.FILL);
 
         Double yaw = AdamSensorDriver.getCurrYaw();
-        canvas.drawText(
-                "N",
-                Math.round(middleX + Math.cos(yaw) * width/2),
-                Math.round(middleY + Math.sin(yaw) * height/2),
-                paint
-        );
+        for(int i = 0; i < 4; i ++){
+            Double offset = Math.PI * i/2;
+            canvas.drawText(
+                    ((Long)Math.round((offset)/Math.PI*180)).toString() ,
+                    Math.round(middleX + Math.cos(-1 * yaw + offset) * width/2),
+                    Math.round(middleY + Math.sin(-1 * yaw + offset) * height/2),
+                    paint
+            );
+        }
         DrawAdamObjects(canvas, width, height);
         DrawStackable(canvas);
         DrawCursor(canvas);
@@ -124,7 +127,7 @@ public class AdamRadar extends AdamDrawable {
         Double yaw = AdamSensorDriver.getCurrYaw();
         double radius = a2dPoint.getMetaDistance() / AdamRadar.DEFAULT_MAX_DIST * (this.height/2);
         Long bigX  = Math.round( (Math.cos(a2dPoint.getMetaAngle() - yaw) *  radius)+ getCenterX()- cursor.width/2);
-        Long bigY =  Math.round( (Math.sin(a2dPoint.getMetaAngle() - yaw)  * radius) + getCenterY()- cursor.height/2);
+        Long bigY =  Math.round( (Math.sin(a2dPoint.getMetaAngle()- yaw)  * radius) + getCenterY()- cursor.height/2);
         cursor.setLeft(bigX.intValue());
         cursor.setTop(bigY.intValue());
         //cursor.setHeight(((Long)Math.round(a2dPoint.getScale() * 140)).intValue());

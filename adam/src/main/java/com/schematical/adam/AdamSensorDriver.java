@@ -67,7 +67,7 @@ public class AdamSensorDriver implements SensorEventListener{
 
 
 
-            currYaw =((Float) mOrientation[0]).doubleValue();
+            currYaw =((Float) mOrientation[0]).doubleValue()+ Math.PI/2;
             currPitch = ((Float)mOrientation[1]).doubleValue();
             currRoll = ((Float)mOrientation[2]).doubleValue();
             currIncline = ((Float)incl).doubleValue();
@@ -96,7 +96,7 @@ public class AdamSensorDriver implements SensorEventListener{
     }
 
     public static Double getCurrYaw() {
-        return Math.PI*.7;//currYaw;
+        return currYaw;
     }
 
     public static Double getCurrPitch() {

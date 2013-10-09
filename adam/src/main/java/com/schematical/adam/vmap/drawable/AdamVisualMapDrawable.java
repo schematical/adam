@@ -14,10 +14,12 @@ import com.schematical.adam.drawable.AdamIcon;
 import com.schematical.adam.drawable.iAdamDrawable;
 import com.schematical.adam.renderer.Adam2DPoint;
 import com.schematical.adam.renderer.Adam3DEngine;
+import com.schematical.adam.vmap.AdamVisualMap;
 import com.schematical.adam.vmap.AdamVisualMapDriver;
 import com.schematical.adam.vmap.AdamVisualMapPoint;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 /**
  * Created by user1a on 10/8/13.
@@ -38,23 +40,46 @@ public class AdamVisualMapDrawable extends AdamDrawable {
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
+        AdamVisualMapDriver.InitMap();
     }
     public void Draw(Canvas canvas){
         //For now lets just draw a an icon at the distance point
         AdamVisualMapPoint ap = AdamVisualMapDriver.GetLocationOfFloorPoint();
 
-        //Log.d("adam", "x:" + ap.getX() + "  y: " + ap.getY() + " z: " + ap.getZ());
+
         Location rp = ap.getGeoLocation(AdamLocation.GetLocation());
 
         Adam2DPoint a2dPoint = Adam3DEngine.Get2DPos(canvas, rp);
 
-        //Log.d("adam", a2dPoint.getX() + "/" + a2dPoint.getY());
 
-        cursor.setLeft(((Long) Math.round(a2dPoint.getX())).intValue());
-        cursor.setTop(((Long)Math.round(a2dPoint.getY())).intValue());
-        //cursor.setHeight(((Long)Math.round(a2dPoint.getScale() * 140)).intValue());
-        cursor.Draw(canvas);
+        //if(a2dPoint.getTopY() < 0 ){
+            cursor.setLeft(((Long) Math.round(a2dPoint.getX())).intValue());
+            cursor.setTop(((Long)Math.round(a2dPoint.getY())).intValue());
+            //cursor.setHeight(((Long)Math.round(a2dPoint.getScale() * 140)).intValue());
+            cursor.Draw(canvas);
+        //}
 
+        AdamVisualMap map = AdamVisualMapDriver.getMap();
+        ArrayList<AdamVisualMapPoint> points = map.getPoints();
+        Adam2DPoint a2dPoint_2 = null;
+        for(int i = 1; i < points.size(); i++){
+            AdamVisualMapPoint point = points.get(i);
+            rp = point.getGeoLocation(AdamLocation.GetLocation());
+            a2dPoint_2 = Adam3DEngine.Get2DPos(canvas, rp);
+
+            Float x1 = a2dPoint.getX().floatValue();
+            Float y1 = a2dPoint.getY().floatValue();
+            Float x2 = a2dPoint_2.getX().floatValue();
+            Float y2 = a2dPoint_2.getY().floatValue();
+            canvas.drawLine(
+                x1,
+                y1,
+                x2,
+                y2,
+                paint
+            );
+            a2dPoint =a2dPoint_2;
+        }
 
     }
 }

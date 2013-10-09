@@ -50,16 +50,16 @@ public class Adam2DPoint {
         this.metaDistance = metaDistance;
     }
 
-    public Double getTopX(Double distance) {
-        return topX * ((this.metaDistance/AdamRadar.DEFAULT_MAX_DIST)* distance);
+    public Double getTopX() {
+        return topX;
     }
 
     public void setTopX(Double topX) {
         this.topX = topX;
     }
 
-    public Double getTopY(Double distance) {
-        return topY * ((this.metaDistance/AdamRadar.DEFAULT_MAX_DIST) * distance);
+    public Double getTopY() {
+        return topY;
     }
 
     public void setTopY(Double topY) {
