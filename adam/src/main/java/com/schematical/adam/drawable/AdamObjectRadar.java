@@ -43,10 +43,10 @@ public class AdamObjectRadar extends AdamDrawable {
             String sDesc = ao.GetAlias() + "(" + Math.round(this.radarDistance) +  " / " + degrees + ")";
             if(adamRadar.isFullScreen()){
                 canvas.drawText(
-                        sDesc,
-                        (float) bigX + adamRadar.getX() +nWidth / 2,
-                        (float) bigY + adamRadar.getY() +nHeight / 2,
-                        paint
+                    sDesc,
+                    (float) bigX + adamRadar.getX() +nWidth / 2,
+                    (float) bigY + adamRadar.getY() +nHeight / 2,
+                    paint
                 );
             }
 

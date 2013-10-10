@@ -57,6 +57,18 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
 
         return nLocation;
     }
+    public static Double GetBearing(Double fromX, Double fromY, Double toX, Double toY){
+        Double diffX = fromX - toX;
+        Double diffY = fromY - toY;
+        Double hyp = Math.sqrt(Math.pow(diffX, 2) + Math.pow(diffY, 2));
+        Double rot = Math.acos(fromX/hyp);
+
+        if(diffY < 0 ){
+            rot += Math.PI;
+        }
+        return rot;
+
+    }
 
 
 

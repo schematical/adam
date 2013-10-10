@@ -29,7 +29,7 @@ public class AdamVisualMapDriver {
         Double cZ = -1 * DEFAULT_EYE_HEIGHT;//The distance from the floor point is always the eye height below the measuring device
 
         Double yaw = AdamSensorDriver.getCurrYaw();
-        Double cX = Math.cos( yaw) * distX;
+        Double cX = Math.cos(yaw) * distX;
         Double cY = Math.sin(yaw) * distX;
 
         AdamVisualMapPoint ap = new AdamVisualMapPoint(

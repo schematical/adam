@@ -41,7 +41,7 @@ public class AdamPing {
         double o = (this.pingLat - p2.pingLat);
         double a = (this.pingLng - p2.pingLng);
         if(a == 0){
-            return Math.atan(0);
+            return Math.sin(0);
         }
         double angle = Math.atan(o/a);
         return angle;

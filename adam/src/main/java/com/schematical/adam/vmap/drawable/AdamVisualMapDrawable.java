@@ -27,6 +27,8 @@ import java.util.ArrayList;
 public class AdamVisualMapDrawable extends AdamDrawable {
     public AdamIcon cursor;
     public AdamStackablePercentField txtDistance;
+    public AdamStackableTextField txtCoords;
+    public AdamVisualMapPoint ap;
     public AdamVisualMapDrawable(iAdamDrawable nAv) {
         super(nAv);
         cursor = new AdamIcon(this, AdamIcon.building);
@@ -40,11 +42,24 @@ public class AdamVisualMapDrawable extends AdamDrawable {
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
+
+        txtCoords = new AdamStackableTextField(cursor);
+
+        try {
+            Method m = this.getClass().getMethod("GetCoords");
+            txtCoords.Follow(this, m);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
         AdamVisualMapDriver.InitMap();
+    }
+    public String GetCoords(){
+        Double yaw = AdamSensorDriver.getCurrYaw();
+        return Math.round(ap.getX()) + "," + Math.round(ap.getY()) + "," + Math.round(ap.getZ()) + " : " + Math.round(AdamLocation.GetBearing(0d,0d, ap.getX(), ap.getY())/Math.PI*180) + " / " + Math.round(yaw/Math.PI*180);
     }
     public void Draw(Canvas canvas){
         //For now lets just draw a an icon at the distance point
-        AdamVisualMapPoint ap = AdamVisualMapDriver.GetLocationOfFloorPoint();
+        ap = AdamVisualMapDriver.GetLocationOfFloorPoint();
 
 
         Location rp = ap.getGeoLocation(AdamLocation.GetLocation());
@@ -62,7 +77,7 @@ public class AdamVisualMapDrawable extends AdamDrawable {
         AdamVisualMap map = AdamVisualMapDriver.getMap();
         ArrayList<AdamVisualMapPoint> points = map.getPoints();
         Adam2DPoint a2dPoint_2 = null;
-        for(int i = 1; i < points.size(); i++){
+        for(int i = 0; i < points.size(); i++){
             AdamVisualMapPoint point = points.get(i);
             rp = point.getGeoLocation(AdamLocation.GetLocation());
             a2dPoint_2 = Adam3DEngine.Get2DPos(canvas, rp);

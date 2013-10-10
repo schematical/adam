@@ -200,72 +200,75 @@ public class AdamView extends SurfaceView implements SurfaceHolder.Callback, Vie
 
         AdamActivityMain am = ((AdamActivityMain) getContext());
         AdamObject objNFocused = null;
-        Location mLocation = am.GetLocation();
-        if(mLocation != null){
+
+        if((AdamSensorDriver.getCurrYaw() != null)){
+            Location mLocation = am.GetLocation();
+            if(mLocation != null){
 
 
-            Hashtable<String, AdamObject> mObjects = am.GetAdamObjects();
-            Enumeration names = mObjects.keys();
-            String objId = null;
-            double lastFocusXDiff = Double.POSITIVE_INFINITY;
-            double currFocusXDiff = 0;
-            while(names.hasMoreElements()) {
-                objId = (String) names.nextElement();
+                Hashtable<String, AdamObject> mObjects = am.GetAdamObjects();
+                Enumeration names = mObjects.keys();
+                String objId = null;
+                double lastFocusXDiff = Double.POSITIVE_INFINITY;
+                double currFocusXDiff = 0;
+                while(names.hasMoreElements()) {
+                    objId = (String) names.nextElement();
 
-                AdamObject mObject = (AdamObject) mObjects.get(objId);
+                    AdamObject mObject = (AdamObject) mObjects.get(objId);
 
-                //Find the diff between the Angle were facing and the angle of the object
+                    //Find the diff between the Angle were facing and the angle of the object
 
-                if(mObject.GetLng() != 0){
-                    Location mObjLoc = mObject.GetLocation();
-                    Adam2DPoint aPoint = Adam3DEngine.Get2DPos(canvas, mObjLoc);
-
-
-
-                    mObject.Radar().SetRadarXY(aPoint.getMetaAngle() - AdamSensorDriver.getCurrYaw(), aPoint.getMetaDistance());
-
-                    AdamObjectHud objHud = mObject.Hud();
+                    if(mObject.GetLng() != 0){
+                        Location mObjLoc = mObject.GetLocation();
+                        Adam2DPoint aPoint = Adam3DEngine.Get2DPos(canvas, mObjLoc);
 
 
-                    if(aPoint.getTopY() > 0 ){
-                        objHud.SetGoalXY(
-                            (int) Math.round(aPoint.getX()),
-                            (int) Math.round(aPoint.getY()),
-                            aPoint.getScale()
-                        );
-                        if(!this.targetIsLocked){
-                            currFocusXDiff = Math.abs(aPoint.getX() - canvas.getWidth()/2);
-                            if(currFocusXDiff < lastFocusXDiff){
-                                lastFocusXDiff = currFocusXDiff;
-                                objNFocused = objHud.getAdamObject();
+
+                        mObject.Radar().SetRadarXY(aPoint.getMetaAngle() - AdamSensorDriver.getCurrYaw(), aPoint.getMetaDistance());
+
+                        AdamObjectHud objHud = mObject.Hud();
+
+
+                        if(aPoint.getTopY() > 0 ){
+                            objHud.SetGoalXY(
+                                (int) Math.round(aPoint.getX()),
+                                (int) Math.round(aPoint.getY()),
+                                aPoint.getScale()
+                            );
+                            if(!this.targetIsLocked){
+                                currFocusXDiff = Math.abs(aPoint.getX() - canvas.getWidth()/2);
+                                if(currFocusXDiff < lastFocusXDiff){
+                                    lastFocusXDiff = currFocusXDiff;
+                                    objNFocused = objHud.getAdamObject();
+                                }
                             }
+
+                        }else{
+                            objHud.Hide();
                         }
 
-                    }else{
-                        objHud.Hide();
+
                     }
 
-
                 }
-
+                if(objNFocused != null && !objNFocused.equals(objFocused)){
+                    //Trigger highlight effect
+                    objFocused = objNFocused;
+                }
             }
-            if(objNFocused != null && !objNFocused.equals(objFocused)){
-                //Trigger highlight effect
-                objFocused = objNFocused;
-            }
-        }
 
+            //objFocused = ((AdamActivityMain)getContext()).GetAdamObject("100 State");
+            Enumeration<String> keys = controls.keys();
 
-        //objFocused = ((AdamActivityMain)getContext()).GetAdamObject("100 State");
-        Enumeration<String> keys = controls.keys();
-
-        while(keys.hasMoreElements()){
-            String key = keys.nextElement();
-            AdamDrawable ad = (AdamDrawable) controls.get(key);
-            if(ad.getObjParent() == null){
-                ad.Draw(canvas);
+            while(keys.hasMoreElements()){
+                String key = keys.nextElement();
+                AdamDrawable ad = (AdamDrawable) controls.get(key);
+                if(ad.getObjParent() == null){
+                    ad.Draw(canvas);
+                }
             }
         }
+
 
         postInvalidate();
 

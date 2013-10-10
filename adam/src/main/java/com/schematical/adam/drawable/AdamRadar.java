@@ -100,13 +100,14 @@ public class AdamRadar extends AdamDrawable {
         paint.setStyle(Paint.Style.FILL);
 
         Double yaw = AdamSensorDriver.getCurrYaw();
+
         for(int i = 0; i < 4; i ++){
             Double offset = Math.PI * i/2;
             canvas.drawText(
-                    ((Long)Math.round((offset)/Math.PI*180)).toString() ,
-                    Math.round(middleX + Math.cos(-1 * yaw + offset) * width/2),
-                    Math.round(middleY + Math.sin(-1 * yaw + offset) * height/2),
-                    paint
+                ((Long)Math.round((offset)/Math.PI*180)).toString() ,
+                Math.round(middleX + Math.cos(-1 * yaw + offset) * width/2),
+                Math.round(middleY + Math.sin(-1 * yaw + offset) * height/2),
+                paint
             );
         }
         DrawAdamObjects(canvas, width, height);

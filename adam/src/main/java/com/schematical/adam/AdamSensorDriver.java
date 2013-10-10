@@ -40,8 +40,13 @@ public class AdamSensorDriver implements SensorEventListener{
 
     public void onSensorChanged(SensorEvent evt) {
         int type=evt.sensor.getType();
-        Float weight = 10f;
-        //Smoothing the sensor data a bit
+        Float weight = 100f;
+        if (type == Sensor.TYPE_MAGNETIC_FIELD) {
+            geomag = evt.values;
+        }else{
+            gravity = evt.values;
+        }
+      /*  //Smoothing the sensor data a bit
         if (type == Sensor.TYPE_MAGNETIC_FIELD) {
             geomag[0]=(geomag[0]*weight+evt.values[0])/(weight+1);
             geomag[1]=(geomag[1]*weight+evt.values[1])/(weight+1);
@@ -50,7 +55,7 @@ public class AdamSensorDriver implements SensorEventListener{
             gravity[0]=(gravity[0]*weight+evt.values[0])/(weight+1);
             gravity[1]=(gravity[1]*weight+evt.values[1])/(weight+1);
             gravity[2]=(gravity[2]*weight+evt.values[2])/(weight+1);
-        }
+        }*/
 
         if ((type==Sensor.TYPE_MAGNETIC_FIELD) || (type==Sensor.TYPE_ACCELEROMETER)) {
             float[] mRotationMatrix = new float[16];
@@ -65,12 +70,18 @@ public class AdamSensorDriver implements SensorEventListener{
             SensorManager.getOrientation(rotationMatrix, mOrientation);
             float incl = SensorManager.getInclination(inclinationMatrix);
 
+            if(currYaw == null){
+                currYaw = 0d;
+                currPitch = 0d;
+                currRoll = 0d;
+                currIncline = 0d;
+            }
 
-
-            currYaw =((Float) mOrientation[0]).doubleValue()+ Math.PI/2;
-            currPitch = ((Float)mOrientation[1]).doubleValue();
-            currRoll = ((Float)mOrientation[2]).doubleValue();
-            currIncline = ((Float)incl).doubleValue();
+            currYaw = ((currYaw * weight) + (mOrientation[0]+ Math.PI/2)) /(weight + 1);
+            currPitch = ((currPitch * weight) + mOrientation[1])/(weight + 1);
+            currRoll = ((currRoll * weight) +  mOrientation[2])/(weight + 1);
+            currIncline = ((currIncline * weight) + incl)/(weight + 1);
+            Log.d("adam", "Yaw: " + (currYaw/Math.PI*180) + " - " + type);
 
         }
 
