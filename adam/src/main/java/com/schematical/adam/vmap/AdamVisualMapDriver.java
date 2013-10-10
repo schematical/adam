@@ -12,10 +12,11 @@ public class AdamVisualMapDriver {
     public static final Double DEFAULT_EYE_HEIGHT = 1.6256;
 
 
-
+    public static AdamVisualMapPoint floorAp;
     public static AdamVisualMap map;
     public static AdamVisualMap InitMap(){
         map = new AdamVisualMap();
+        //floorAp = new AdamVisualMapPoint(0d,0d,0d);
         return map;
     }
     public static Double GetEstimatedDistanceToFloorPoint(){
@@ -32,12 +33,8 @@ public class AdamVisualMapDriver {
         Double cX = Math.cos(yaw) * distX;
         Double cY = Math.sin(yaw) * distX;
 
-        AdamVisualMapPoint ap = new AdamVisualMapPoint(
-            cX,
-            cY,
-            cZ
-        );
-       return ap;
+        floorAp = new AdamVisualMapPoint(cX, cY, cZ);
+       return floorAp;
     }
     public static void AddFloorPointAtCurrOrientation(){
         AdamVisualMapPoint ap = GetLocationOfFloorPoint();

@@ -60,4 +60,11 @@ public class AdamVisualMapPoint {
     public Location getGeoLocation() {
        return getGeoLocation(this.referenceLocation);
     }
+
+    public void updateCoords(Double cX, Double cY, Double cZ) {
+        double weight = 100;
+        x = ((x * weight) + cX) / (weight+1);
+        y = ((y * weight) + cY) / (weight+1);
+        z = ((z * weight) + cX) / (weight+1);
+    }
 }

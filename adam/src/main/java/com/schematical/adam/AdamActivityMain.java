@@ -14,7 +14,10 @@ import android.widget.FrameLayout;
 
 import com.schematical.adam.img.AdamImgRecDriver;
 import com.schematical.adam.location.AdamLocation;
+import com.schematical.adam.socket.AdamSocketClient;
 import com.schematical.adam.tts.AdamTTSDriver;
+
+import org.json.JSONObject;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -44,7 +47,7 @@ public class AdamActivityMain extends Activity {
     private AdamLocation aLocation;
     private AdamTTSDriver speachDriver;
     private AdamImgRecDriver imgRecDriver;
-
+    private static AdamSocketClient socketClient;
 
 
     public AdamActivityMain() {
@@ -58,7 +61,7 @@ public class AdamActivityMain extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        socketClient = new AdamSocketClient(this);
         sensorDriver = new AdamSensorDriver(this);
         speachDriver = new AdamTTSDriver(this);
         status = "Uninitialized";
@@ -95,7 +98,14 @@ public class AdamActivityMain extends Activity {
     }
     public void SetStatus(String nStatus){
         status = nStatus;
+
         //this.Speak(status);
+    }
+    public static void SendToServer(JSONObject payload){
+        SendToServer(payload.toString());
+    }
+    public static void SendToServer(String message){
+        socketClient.Write(message);
     }
     public void UpdateAdamObject(String id, Object data){
         AdamObject ao = (AdamObject) mObjects.get(id);

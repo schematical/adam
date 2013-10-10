@@ -5,6 +5,7 @@ import android.location.Location;
 import android.nfc.Tag;
 import android.util.Log;
 
+import com.schematical.adam.AdamActivityMain;
 import com.schematical.adam.AdamSensorDriver;
 import com.schematical.adam.drawable.AdamStackablePercentField;
 import com.schematical.adam.drawable.AdamStackableTextField;
@@ -55,7 +56,9 @@ public class AdamVisualMapDrawable extends AdamDrawable {
     }
     public String GetCoords(){
         Double yaw = AdamSensorDriver.getCurrYaw();
-        return Math.round(ap.getX()) + "," + Math.round(ap.getY()) + "," + Math.round(ap.getZ()) + " : " + Math.round(AdamLocation.GetBearing(0d,0d, ap.getX(), ap.getY())/Math.PI*180) + " / " + Math.round(yaw/Math.PI*180);
+        String txt = Math.round(ap.getX()) + "," + Math.round(ap.getY()) + "," + Math.round(ap.getZ()) + " : " + Math.round((AdamLocation.GetBearing(0d,0d, ap.getX(), ap.getY()) + yaw)/Math.PI*180) + " / " + Math.round(yaw/Math.PI*180);
+        //AdamActivityMain.SendToServer(txt);
+        return txt;
     }
     public void Draw(Canvas canvas){
         //For now lets just draw a an icon at the distance point

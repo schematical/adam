@@ -21,32 +21,32 @@ public class Adam3DEngine {
     public static Adam2DPoint Get2DPos(Canvas canvas, Location mObjLoc, Location mLocation){
 
         double distance = mLocation.distanceTo(mObjLoc);
-        double scale = 1/(distance * zoom);
+        double scale = 1;//1/Math.sqrt(distance) * zoom;
         double alt_diff = mLocation.getAltitude() - mObjLoc.getAltitude();
-        /*mLocation.removeBearing();
-        mObjLoc.removeBearing();
-        double baring = (mLocation.bearingTo(mObjLoc)/180) * Math.PI;*/
-        double yDiff = mObjLoc.getLongitude() - mLocation.getLongitude();
-        double xDiff = mObjLoc.getLatitude() - mLocation.getLatitude();
+
         Hashtable<String, Double> mLocMeters = AdamLocation.GetXYMeters(mLocation.getLatitude(), mLocation.getLongitude());
         Hashtable<String, Double> objLocMeters = AdamLocation.GetXYMeters(mObjLoc.getLatitude(), mObjLoc.getLongitude());
-        double xDiffMeters = ((Double)mLocMeters.get("x")) - ((Double)objLocMeters.get("x"));
-        double yDiffMeters = ((Double)mLocMeters.get("y")) - ((Double)objLocMeters.get("y"));
 
 
-        double baring = AdamLocation.distFrom(
-            mLocMeters.get("x").floatValue(),
-            mLocMeters.get("y").floatValue(),
-            objLocMeters.get("x").floatValue(),
-            objLocMeters.get("y").floatValue()
+        Double baring = AdamLocation.GetBearing(
+            mLocMeters.get("x"),
+            mLocMeters.get("y"),
+            objLocMeters.get("x"),
+            objLocMeters.get("y")
+        );
+        Double baringZ = AdamLocation.GetBearing(
+            mLocMeters.get("x"),
+            mLocation.getAltitude(),
+            objLocMeters.get("x"),
+            mObjLoc.getAltitude()
         );
         double yaw = AdamSensorDriver.getCurrYaw();
-        double bigX =(Math.cos(baring + yaw) *  (canvas.getWidth()/2)) /scale;
-        double nYAngle = alt_diff/distance  + AdamSensorDriver.getCurrPitch();
+        double bigX =(Math.sin(baring + yaw) *  (canvas.getWidth()/2)) /scale;
+
         double screenX = bigX + canvas.getWidth()/2;
 
-        double bigY = (-1 * (Math.sin(nYAngle) * (canvas.getHeight()/2)))  /scale;
-        Log.d("adam", ((Double)bigX) + "/" + ((Double)bigY));
+        double bigY = (Math.sin(baringZ  - AdamSensorDriver.getCurrPitch()) * (canvas.getHeight()/2))  /scale;
+        Log.d("adam", (baring/Math.PI*180 + " - " + (Double)bigX) + "/" + ((Double)bigY) + " - " + 1/scale);
 
         double screenY = bigY + (canvas.getHeight()/2);
         Adam2DPoint ap = new Adam2DPoint(screenX,screenY, scale);

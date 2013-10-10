@@ -5,7 +5,13 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
 import android.util.Log;
+
+import com.schematical.adam.location.AdamLocation;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by user1a on 10/6/13.
@@ -76,18 +82,34 @@ public class AdamSensorDriver implements SensorEventListener{
                 currRoll = 0d;
                 currIncline = 0d;
             }
-
+            //Log.d("adam", type + " - " + mOrientation[0] + ","+ mOrientation[1] + "," + mOrientation[2]);
             currYaw = ((currYaw * weight) + (mOrientation[0]+ Math.PI/2)) /(weight + 1);
             currPitch = ((currPitch * weight) + mOrientation[1])/(weight + 1);
             currRoll = ((currRoll * weight) +  mOrientation[2])/(weight + 1);
             currIncline = ((currIncline * weight) + incl)/(weight + 1);
-            Log.d("adam", "Yaw: " + (currYaw/Math.PI*180) + " - " + type);
+
+            UpdateServer();
 
         }
 
 
     }
+    public void UpdateServer(){
+        JSONObject jo = new JSONObject();
+        try {
+            jo.put("event", "orientation_change");
+            jo.put("yaw", currYaw);
+            jo.put("pitch", currPitch);
+            jo.put("roll", currRoll);
+            jo.put("incline", currIncline);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        AdamActivityMain.SendToServer(jo);
 
+        //TMP Hack
+        AdamLocation.UpdateServer();
+    }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
@@ -107,7 +129,7 @@ public class AdamSensorDriver implements SensorEventListener{
     }
 
     public static Double getCurrYaw() {
-        return currYaw;
+        return currYaw;// Math.PI/2;
     }
 
     public static Double getCurrPitch() {
