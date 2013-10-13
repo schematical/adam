@@ -12,11 +12,13 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 
+import com.schematical.adam.async.AdamSaveDriver;
 import com.schematical.adam.img.AdamImgRecDriver;
 import com.schematical.adam.location.AdamLocation;
 import com.schematical.adam.socket.AdamSocketClient;
 import com.schematical.adam.tts.AdamTTSDriver;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Enumeration;
@@ -26,7 +28,7 @@ import java.util.Hashtable;
 public class AdamActivityMain extends Activity {
 
     public static final double PING_DISTANCE = 10;
-    private Hashtable mObjects = new Hashtable();
+    private static Hashtable mObjects = new Hashtable();
 
 
     private Camera mCamera;
@@ -50,6 +52,7 @@ public class AdamActivityMain extends Activity {
     private static AdamSocketClient socketClient;
 
 
+
     public AdamActivityMain() {
     }
 
@@ -68,7 +71,7 @@ public class AdamActivityMain extends Activity {
         // Create an instance of Camera
 
         saveDriver = new AdamSaveDriver(this);
-        //saveDriver.Load();
+        saveDriver.Load();
         // Create our Preview view and set it as the content of our activity.
         mCamera = getCameraInstance();
         imgRecDriver = new AdamImgRecDriver(this);
@@ -79,6 +82,8 @@ public class AdamActivityMain extends Activity {
         preview.addView(mView);
 
         bluetoothDriver = new AdamBluetooth(this);
+
+        AdamTelephoneDriver.Init(this);
 
         aLocation = new AdamLocation(this);
         wifiReceiver  = new AdamWifiManager(this);
@@ -99,11 +104,14 @@ public class AdamActivityMain extends Activity {
     public void SetStatus(String nStatus){
         status = nStatus;
 
-        //this.Speak(status);
+        this.Speak(status);
     }
+
+
     public static void SendToServer(JSONObject payload){
         SendToServer(payload.toString());
     }
+
     public static void SendToServer(String message){
         socketClient.Write(message);
     }
@@ -123,7 +131,7 @@ public class AdamActivityMain extends Activity {
     public Location GetLocation(){
         return aLocation.GetLocation();
     }
-    public Hashtable<String, AdamObject>GetAdamObjects(){
+    public static Hashtable<String, AdamObject>GetAdamObjects(){
         return mObjects;
     }
     public AdamObject GetAdamObject(String id){

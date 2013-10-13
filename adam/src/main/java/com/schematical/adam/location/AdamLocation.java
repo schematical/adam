@@ -10,6 +10,8 @@ import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.schematical.adam.AdamActivityMain;
+import com.schematical.adam.async.AdamGetLocationByAOTask;
+import com.schematical.adam.socket.AdamSocketClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,9 +31,15 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
     protected static double measure_ct = 0;
 
     protected AdamActivityMain am;
+    private static AdamGetLocationByAOTask async;
 
 
-
+    public static void GetLocationFromAOs(){
+        if(async == null){
+            async = new AdamGetLocationByAOTask();
+            async.Load();
+        }
+    }
     public AdamLocation(AdamActivityMain adamActivityMain) {
         am = adamActivityMain;
         // Acquire a reference to the system Location Manager
@@ -46,6 +54,7 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
     public static Location GetLocation(){
         Location nLocation = new Location("gps");
         if(lat_t ==0){
+            GetLocationFromAOs();
             nLocation.setLatitude(43.074785782963);
             nLocation.setLongitude(-89.38710576539);
             nLocation.setAltitude(0);
@@ -148,7 +157,7 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
         this.measure_ct += 1;
         if(oLoc == null){
             am.SetStatus("Location Updated");
-            this.UpdateServer();
+
         }
 
 
@@ -164,7 +173,7 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        AdamActivityMain.SendToServer(jo);
+        AdamSocketClient.SetUpdateData("location", jo);
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -179,4 +188,16 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
         am.SetStatus("GPS Disabled");
     }
 
+    public static void ParseLocationData(JSONObject jObj) throws JSONException {
+        Double weight = 1d;
+        lat_t += (Double)jObj.get("lat") * weight;
+        lng_t += (Double)jObj.get("lng")* weight;
+        altitude_t += (Double)jObj.get("altitude")* weight;
+        weight_t += weight;
+        measure_ct += 1;
+    }
+
+    public static void CleanUp() {
+        async = null;
+    }
 }

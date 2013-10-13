@@ -1,11 +1,8 @@
-package com.schematical.adam;
+package com.schematical.adam.async;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
-
-import com.google.android.gms.internal.am;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

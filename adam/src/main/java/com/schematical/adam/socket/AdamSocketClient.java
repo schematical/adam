@@ -26,20 +26,20 @@ import android.widget.EditText;
 
 import com.schematical.adam.AdamActivityMain;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class AdamSocketClient {
+
     private AdamActivityMain am;
     private Socket socket;
     private PrintWriter out;
     private static final int SERVERPORT = 1337;
-    private static final String SERVER_IP = "192.168.1.51";
-
-
-
-
-
+    private static final String SERVER_IP = "192.168.1.106";
+    private static JSONObject jUpdateData;
 
     public AdamSocketClient(AdamActivityMain am) {
-        new Thread(new ClientThread()).start();
+        new Thread(new AdamSocketUpdater()).start();
 
     }
     public void InitWriter() throws IOException {
@@ -70,6 +70,9 @@ public class AdamSocketClient {
 
     }
     public void Write(String strOut){
+        if(false){//Shitty magic debugger
+            return;
+        }
         try {
             if(out == null){
                 InitWriter();
@@ -91,6 +94,11 @@ public class AdamSocketClient {
 
     }
 
+    public static void SendUpdate() {
+        AdamActivityMain.SendToServer(jUpdateData);
+        jUpdateData = new JSONObject();
+    }
+
     class ClientThread implements Runnable {
 
         @Override
@@ -100,6 +108,9 @@ public class AdamSocketClient {
                 InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
 
                 socket = new Socket(serverAddr, SERVERPORT);
+                AdamSocketUpdater updater = new AdamSocketUpdater();
+                updater.run();
+
 
             } catch (UnknownHostException e1) {
                 e1.printStackTrace();
@@ -107,6 +118,17 @@ public class AdamSocketClient {
                 e1.printStackTrace();
             }
 
+        }
+
+    }
+    public static void SetUpdateData(String key, Object updateData){
+        if(jUpdateData == null){
+            jUpdateData = new JSONObject();
+        }
+        try {
+            jUpdateData.put(key, updateData);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
     }
