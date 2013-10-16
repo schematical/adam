@@ -1,4 +1,4 @@
-package com.schematical.adam.bluetooth;
+package com.schematical.adam.signal.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -8,14 +8,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import com.schematical.adam.AdamWorldActivity;
+import com.schematical.adam.signal.AdamSignalDriver;
+import com.schematical.adam.signal.iAdamSignalDriver;
 import com.schematical.adam.old.AdamActivityMain;
-
-import java.util.Hashtable;
 
 /**
  * Created by user1a on 10/3/13.
  */
-public class AdamBluetoothDriver extends BroadcastReceiver{
+public class AdamBluetoothDriver extends BroadcastReceiver implements iAdamSignalDriver {
 
 
     BluetoothAdapter mBluetoothAdapter;
@@ -23,7 +23,7 @@ public class AdamBluetoothDriver extends BroadcastReceiver{
     private IntentFilter discoveryFinished;
     private IntentFilter actionFoundFilter;
 
-    AdamBluetoothDriver(){
+    public AdamBluetoothDriver(){
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         if (mBluetoothAdapter == null) {
@@ -35,7 +35,7 @@ public class AdamBluetoothDriver extends BroadcastReceiver{
 
 
     }
-    public void Start(){
+    public void Connect(){
 
         if (mBluetoothAdapter.isEnabled()) {
             AdamWorldActivity am = AdamWorldActivity.getInstance();
@@ -79,6 +79,7 @@ public class AdamBluetoothDriver extends BroadcastReceiver{
                     rssi
             );
 
+            AdamSignalDriver.AddScanResult(as);
         }
 
     }

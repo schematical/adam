@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 
 
 import com.schematical.adam.bluetooth.AdamBluetoothDriver;
+import com.schematical.adam.location.AdamLocationDriver;
 import com.schematical.adam.sensors.AdamSensorDriver;
 import com.schematical.adam.telephony.AdamTelephoneDriver;
 import com.schematical.adam.wifi.AdamWifiDriver;
@@ -20,7 +21,6 @@ import com.schematical.adam.R;
 import com.schematical.adam.async.AdamSaveDriver;
 import com.schematical.adam.drawable.AdamView;
 import com.schematical.adam.img.AdamImgRecDriver;
-import com.schematical.adam.location.AdamLocation;
 import com.schematical.adam.model.old.AdamObject;
 import com.schematical.adam.socket.AdamSocketClient;
 import com.schematical.adam.tts.AdamTTSDriver;
@@ -52,7 +52,7 @@ public class AdamActivityMain extends Activity {
 
     public boolean allowPing = false;
     public int pingCt = 0;
-    private AdamLocation aLocation;
+    private AdamLocationDriver aLocation;
     private AdamTTSDriver speachDriver;
     private AdamImgRecDriver imgRecDriver;
     private static AdamSocketClient socketClient;
@@ -91,7 +91,7 @@ public class AdamActivityMain extends Activity {
 
         AdamTelephoneDriver.Init(this);
 
-        aLocation = new AdamLocation(this);
+        aLocation = new AdamLocationDriver(this);
         wifiReceiver  = new AdamWifiDriver(this);
         wifiReceiver.StartScan();
         if(wifiReceiver.IsWifiConnected()){
@@ -160,7 +160,7 @@ public class AdamActivityMain extends Activity {
         return null;
     }
 
-    @Override
+  /*  @Override
     protected void onResume() {
         super.onResume();
         sensorDriver.onResume();
@@ -177,7 +177,7 @@ public class AdamActivityMain extends Activity {
         unregisterReceiver(wifiReceiver);
         sensorDriver.onPause();
         bluetoothDriver.UnregisterListener();
-    }
+    }*/
     /** A safe way to get an instance of the Camera object. */
     public static Camera getCameraInstance(){
         Camera c = null;

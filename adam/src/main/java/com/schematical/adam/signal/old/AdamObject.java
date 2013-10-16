@@ -1,12 +1,12 @@
-package com.schematical.adam.model.old;
+package com.schematical.adam.signal.old;
 
 import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.util.Log;
 
-import com.schematical.adam.bluetooth.AdamBluetoothDriver;
-import com.schematical.adam.old.AdamActivityMain;
-import com.schematical.adam.bluetooth.AdamBluetoothScanResult;
+import com.schematical.adam.signal.bluetooth.AdamBluetoothDriver;
+
+import com.schematical.adam.signal.bluetooth.AdamBluetoothScanResult;
 import com.schematical.adam.drawable.AdamIcon;
 import com.schematical.adam.drawable.AdamObjectHud;
 import com.schematical.adam.drawable.AdamObjectRadar;
@@ -23,7 +23,7 @@ import java.util.List;
  * Created by user1a on 10/1/13.
  */
 public class AdamObject {
-    public static final String TYPE_WIFI_AP = "wifi-ap";
+   /* public static final String TYPE_WIFI_AP = "wifi-ap";
     public static final String TYPE_BLUETOOTH_DEVICE = "bluetooth-device";
     protected AdamActivityMain am;
 
@@ -232,5 +232,5 @@ public class AdamObject {
             return AdamIcon.mobile_phone;
         }
         return AdamIcon.question_mark;
-    }
+    }*/
 }

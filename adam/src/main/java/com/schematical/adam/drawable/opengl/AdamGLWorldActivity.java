@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 
-import com.schematical.adam.async.AdamSaveDriver;
+import com.schematical.adam.comm.async.AdamSaveDriver;
 import com.schematical.adam.sensors.AdamSensorDriver;
 
 /**

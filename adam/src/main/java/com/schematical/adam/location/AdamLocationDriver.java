@@ -9,9 +9,8 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
-import com.schematical.adam.old.AdamActivityMain;
-import com.schematical.adam.async.AdamGetLocationByAOTask;
-import com.schematical.adam.socket.AdamSocketClient;
+import com.schematical.adam.AdamWorldActivity;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,8 +20,7 @@ import java.util.Hashtable;
 /**
  * Created by user1a on 10/4/13.
  */
-public class AdamLocation  implements LocationListener, GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener {
+public class AdamLocationDriver{
     protected static double lat_t = 0;
     protected static double lng_t = 0;
     protected static double altitude_t = 0;
@@ -30,31 +28,13 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
     protected static double weight_t = 0;
     protected static double measure_ct = 0;
 
-    protected AdamActivityMain am;
-    private static AdamGetLocationByAOTask async;
 
-
-    public static void GetLocationFromAOs(){
-        if(async == null){
-            async = new AdamGetLocationByAOTask();
-            async.Load();
-        }
-    }
-    public AdamLocation(AdamActivityMain adamActivityMain) {
-        am = adamActivityMain;
-        // Acquire a reference to the system Location Manager
-        LocationManager locationManager = (LocationManager) am.getSystemService(Context.LOCATION_SERVICE);
-
-        // Register the listener with the Location Manager to receive location updates
-        am.SetStatus("Waiting for GPS");
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-    }
 
 
     public static Location GetLocation(){
         Location nLocation = new Location("gps");
         if(lat_t ==0){
-            GetLocationFromAOs();
+
             nLocation.setLatitude(43.074785782963);
             nLocation.setLongitude(-89.38710576539);
             nLocation.setAltitude(0);
@@ -82,22 +62,6 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
 
     }
 
-
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.d("Adam", "CONNECTED!");
-    }
-
-    @Override
-    public void onDisconnected() {
-        Log.d("Adam", "DISCONNECTED!");
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d("Adam", "Connection Failed :(");
-    }
 
 
 
@@ -144,7 +108,7 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
 
         return new Float(dist * meterConversion).floatValue();
     }
-    public void onLocationChanged(Location location) {
+    public void UpdateLocationFromGPSResult(Location location) {
 
         Location oLoc = this.GetLocation();
 
@@ -156,13 +120,13 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
         this.weight_t += weight;
         this.measure_ct += 1;
         if(oLoc == null){
-            am.SetStatus("Location Updated");
+            //am.SetStatus("Location Updated");
 
         }
 
 
     }
-    public static void UpdateServer(){
+    /*public static void UpdateServer(){
         Location l = GetLocation();
         JSONObject jo = new JSONObject();
         try {
@@ -174,19 +138,8 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
             e.printStackTrace();
         }
         AdamSocketClient.SetUpdateData("location", jo);
-    }
+    }*/
 
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    public void onProviderEnabled(String provider) {
-        am.SetStatus("GPS Enabled");
-    }
-
-    public void onProviderDisabled(String provider) {
-        am.SetStatus("GPS Disabled");
-    }
 
     public static void ParseLocationData(JSONObject jObj) throws JSONException {
         Double weight = 1d;
@@ -197,7 +150,5 @@ public class AdamLocation  implements LocationListener, GooglePlayServicesClient
         measure_ct += 1;
     }
 
-    public static void CleanUp() {
-        async = null;
-    }
+
 }

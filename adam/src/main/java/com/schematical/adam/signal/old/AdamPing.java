@@ -1,4 +1,4 @@
-package com.schematical.adam.model.old;
+package com.schematical.adam.signal.old;
 
 import org.json.JSONException;
 import org.json.JSONObject;

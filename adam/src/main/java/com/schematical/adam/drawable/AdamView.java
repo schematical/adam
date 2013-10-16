@@ -12,7 +12,7 @@ import android.util.Log;
 import android.view.*;
 
 import com.schematical.adam.old.AdamActivityMain;
-import com.schematical.adam.model.old.AdamObject;
+import com.schematical.adam.signal.old.AdamObject;
 import com.schematical.adam.sensors.AdamSensorDriver;
 import com.schematical.adam.R;
 import com.schematical.adam.renderer.Adam2DPoint;

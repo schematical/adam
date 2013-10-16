@@ -6,10 +6,10 @@ import android.location.Location;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.schematical.adam.location.AdamLocationDriver;
 import com.schematical.adam.old.AdamActivityMain;
-import com.schematical.adam.model.old.AdamObject;
+import com.schematical.adam.signal.old.AdamObject;
 import com.schematical.adam.sensors.AdamSensorDriver;
-import com.schematical.adam.location.AdamLocation;
 import com.schematical.adam.renderer.Adam2DPoint;
 import com.schematical.adam.renderer.Adam3DEngine;
 import com.schematical.adam.vmap.AdamVisualMapDriver;
@@ -117,7 +117,7 @@ public class AdamRadar extends AdamDrawable {
         AdamVisualMapPoint ap = AdamVisualMapDriver.GetLocationOfFloorPoint();
 
         //Log.d("adam", "x:" + ap.getX() + "  y: " + ap.getY() + " z: " + ap.getZ());
-        Location rp = ap.getGeoLocation(AdamLocation.GetLocation());
+        Location rp = ap.getGeoLocation(AdamLocationDriver.GetLocation());
 
         Adam2DPoint a2dPoint = Adam3DEngine.Get2DPos(canvas, rp);
 

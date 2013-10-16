@@ -3,10 +3,10 @@ package com.schematical.adam.vmap.drawable;
 import android.graphics.Canvas;
 import android.location.Location;
 
+import com.schematical.adam.location.AdamLocationDriver;
 import com.schematical.adam.sensors.AdamSensorDriver;
 import com.schematical.adam.drawable.AdamStackablePercentField;
 import com.schematical.adam.drawable.AdamStackableTextField;
-import com.schematical.adam.location.AdamLocation;
 import com.schematical.adam.drawable.AdamDrawable;
 import com.schematical.adam.drawable.AdamIcon;
 import com.schematical.adam.drawable.iAdamDrawable;
@@ -53,7 +53,7 @@ public class AdamVisualMapDrawable extends AdamDrawable {
     }
     public String GetCoords(){
         Double yaw = AdamSensorDriver.getCurrYaw();
-        String txt = Math.round(ap.getX()) + "," + Math.round(ap.getY()) + "," + Math.round(ap.getZ()) + " : " + Math.round((AdamLocation.GetBearing(0d,0d, ap.getX(), ap.getY()) + yaw)/Math.PI*180) + " / " + Math.round(yaw/Math.PI*180);
+        String txt = Math.round(ap.getX()) + "," + Math.round(ap.getY()) + "," + Math.round(ap.getZ()) + " : " + Math.round((AdamLocationDriver.GetBearing(0d, 0d, ap.getX(), ap.getY()) + yaw)/Math.PI*180) + " / " + Math.round(yaw/Math.PI*180);
         //AdamActivityMain.SendToServer(txt);
         return txt;
     }
@@ -62,7 +62,7 @@ public class AdamVisualMapDrawable extends AdamDrawable {
         ap = AdamVisualMapDriver.GetLocationOfFloorPoint();
 
 
-        Location rp = ap.getGeoLocation(AdamLocation.GetLocation());
+        Location rp = ap.getGeoLocation(AdamLocationDriver.GetLocation());
 
         Adam2DPoint a2dPoint = Adam3DEngine.Get2DPos(canvas, rp);
 
@@ -79,7 +79,7 @@ public class AdamVisualMapDrawable extends AdamDrawable {
         Adam2DPoint a2dPoint_2 = null;
         for(int i = 0; i < points.size(); i++){
             AdamVisualMapPoint point = points.get(i);
-            rp = point.getGeoLocation(AdamLocation.GetLocation());
+            rp = point.getGeoLocation(AdamLocationDriver.GetLocation());
             a2dPoint_2 = Adam3DEngine.Get2DPos(canvas, rp);
 
             Float x1 = a2dPoint.getX().floatValue();

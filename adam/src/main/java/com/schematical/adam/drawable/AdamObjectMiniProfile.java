@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.location.Location;
 
 import com.schematical.adam.old.AdamActivityMain;
-import com.schematical.adam.model.old.AdamObject;
+import com.schematical.adam.signal.old.AdamObject;
 
 import java.lang.reflect.Method;
 import java.util.Enumeration;

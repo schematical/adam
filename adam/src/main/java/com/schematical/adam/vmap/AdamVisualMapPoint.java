@@ -1,9 +1,8 @@
 package com.schematical.adam.vmap;
 
 import android.location.Location;
-import android.util.Log;
 
-import com.schematical.adam.location.AdamLocation;
+import com.schematical.adam.location.AdamLocationDriver;
 
 import java.util.Hashtable;
 
@@ -42,7 +41,7 @@ public class AdamVisualMapPoint {
     }
 
     public Location getGeoLocation(Location location) {
-        Hashtable<String, Double> coords = AdamLocation.GetXYMeters(
+        Hashtable<String, Double> coords = AdamLocationDriver.GetXYMeters(
                 location.getLatitude(),
                 location.getLongitude()
         );
@@ -52,7 +51,7 @@ public class AdamVisualMapPoint {
         Double realY = y + gY;
         Double realZ = z + location.getAltitude();
 
-        Location rLocation = AdamLocation.GetGeoLocationFromMetersXY(realX, realY);
+        Location rLocation = AdamLocationDriver.GetGeoLocationFromMetersXY(realX, realY);
         rLocation.setAccuracy(location.getAccuracy());
         rLocation.setAltitude(realZ);
         return rLocation;

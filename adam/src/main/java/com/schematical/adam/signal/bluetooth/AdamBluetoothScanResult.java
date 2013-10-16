@@ -1,8 +1,8 @@
-package com.schematical.adam.bluetooth;
+package com.schematical.adam.signal.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
 
-import com.schematical.adam.model.AdamScanResultBase;
+import com.schematical.adam.signal.AdamScanResultBase;
 
 /**
  * Created by user1a on 10/3/13.

@@ -1,4 +1,4 @@
-package com.schematical.adam.telephony;
+package com.schematical.adam.signal.telephony;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
