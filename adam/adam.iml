@@ -71,6 +71,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="android-support-v13" level="project" />
     <orderEntry type="module" module-name="google-play-services_lib1" exported="" />
+    <orderEntry type="library" name="google-play-services" level="project" />
   </component>
 </module>
 
