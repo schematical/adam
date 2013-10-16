@@ -37,7 +37,7 @@ public class AdamCommDriver {
         /*if(adamSocketClient.IsConnected()){
             return adamSocketClient.Send(data);
         }*/
-        adamAsyncDriver.Send(data);
+        adamAsyncDriver.Send(data.toString());
     }
     public static void ParseJsonData(JSONObject jObj) throws JSONException {
 

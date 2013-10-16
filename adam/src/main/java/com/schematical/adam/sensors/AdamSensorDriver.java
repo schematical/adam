@@ -5,9 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-
-import com.schematical.adam.location.AdamLocationDriver;
-import com.schematical.adam.old.AdamActivityMain;
+;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -104,10 +102,7 @@ public class AdamSensorDriver implements SensorEventListener{
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        AdamActivityMain.SendToServer(jo);
 
-        //TMP Hack
-        AdamLocationDriver.UpdateServer();
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {

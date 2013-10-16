@@ -6,17 +6,14 @@ import android.hardware.Camera;
 import android.media.FaceDetector;
 import android.media.FaceDetector.Face;
 
-import com.schematical.adam.old.AdamActivityMain;
 
 /**
  * Created by user1a on 10/6/13.
  */
 public class AdamImgRecDriver implements Camera.FaceDetectionListener {
-    AdamActivityMain am;
-    FaceDetector faceDetector;
-    public AdamImgRecDriver(AdamActivityMain nAm){
-        am = nAm;
 
+    FaceDetector faceDetector;
+    public AdamImgRecDriver(){
     }
     public Face[] AnalyzePhoto(Bitmap bm){
         faceDetector = new FaceDetector(
@@ -44,7 +41,7 @@ public class AdamImgRecDriver implements Camera.FaceDetectionListener {
             for(int i = 0; i < faces.length; i++){
 
             }
-            this.am.SetStatus("Found a face");
+            //this.am.SetStatus("Found a face");
         }
     }
 }

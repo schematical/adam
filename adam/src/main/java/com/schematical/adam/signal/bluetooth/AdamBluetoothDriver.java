@@ -10,7 +10,6 @@ import android.content.IntentFilter;
 import com.schematical.adam.AdamWorldActivity;
 import com.schematical.adam.signal.AdamSignalDriver;
 import com.schematical.adam.signal.iAdamSignalDriver;
-import com.schematical.adam.old.AdamActivityMain;
 
 /**
  * Created by user1a on 10/3/13.

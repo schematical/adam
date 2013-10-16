@@ -3,7 +3,8 @@ package com.schematical.adam.tts;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
-import com.schematical.adam.old.AdamActivityMain;
+import com.schematical.adam.AdamWorldActivity;
+
 
 import java.util.Locale;
 
@@ -11,11 +12,11 @@ import java.util.Locale;
  * Created by user1a on 10/5/13.
  */
 public class AdamTTSDriver implements TextToSpeech.OnInitListener {
-    private final AdamActivityMain am;
+
     private final TextToSpeech tts;
 
-    public AdamTTSDriver(AdamActivityMain nAm){
-        am = nAm;
+    public AdamTTSDriver(){
+        AdamWorldActivity am = AdamWorldActivity.getInstance();
         tts = new TextToSpeech(am, this);
 
 
