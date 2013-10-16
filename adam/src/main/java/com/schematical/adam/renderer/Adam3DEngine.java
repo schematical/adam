@@ -4,9 +4,8 @@ import android.graphics.Canvas;
 import android.location.Location;
 import android.util.Log;
 
-import com.schematical.adam.drawable.AdamRadar;
 import com.schematical.adam.location.AdamLocation;
-import com.schematical.adam.AdamSensorDriver;
+import com.schematical.adam.sensors.AdamSensorDriver;
 
 import java.util.Hashtable;
 

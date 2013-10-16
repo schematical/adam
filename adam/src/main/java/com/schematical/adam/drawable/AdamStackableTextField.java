@@ -2,9 +2,6 @@ package com.schematical.adam.drawable;
 
 import android.graphics.Canvas;
 
-import com.schematical.adam.AdamObject;
-import com.schematical.adam.AdamView;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 

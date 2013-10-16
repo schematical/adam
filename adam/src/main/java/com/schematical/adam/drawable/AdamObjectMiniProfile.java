@@ -1,13 +1,10 @@
 package com.schematical.adam.drawable;
 
 import android.graphics.Canvas;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 
-import com.schematical.adam.AdamActivityMain;
-import com.schematical.adam.AdamObject;
-import com.schematical.adam.AdamView;
+import com.schematical.adam.old.AdamActivityMain;
+import com.schematical.adam.model.old.AdamObject;
 
 import java.lang.reflect.Method;
 import java.util.Enumeration;

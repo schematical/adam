@@ -1,10 +1,6 @@
 package com.schematical.adam.drawable.opengl;
 
-import android.opengl.Matrix;
-
-import com.schematical.adam.AdamSensorDriver;
-import com.schematical.adam.drawable.opengl.AdamOpenGLDrawable;
-import com.schematical.adam.drawable.opengl.iAdamOpenGLDrawable;
+import com.schematical.adam.sensors.AdamSensorDriver;
 
 /**
  * Created by user1a on 10/7/13.

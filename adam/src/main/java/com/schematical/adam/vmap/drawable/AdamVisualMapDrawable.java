@@ -2,11 +2,8 @@ package com.schematical.adam.vmap.drawable;
 
 import android.graphics.Canvas;
 import android.location.Location;
-import android.nfc.Tag;
-import android.util.Log;
 
-import com.schematical.adam.AdamActivityMain;
-import com.schematical.adam.AdamSensorDriver;
+import com.schematical.adam.sensors.AdamSensorDriver;
 import com.schematical.adam.drawable.AdamStackablePercentField;
 import com.schematical.adam.drawable.AdamStackableTextField;
 import com.schematical.adam.location.AdamLocation;

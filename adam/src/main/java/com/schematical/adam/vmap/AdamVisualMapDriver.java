@@ -1,9 +1,6 @@
 package com.schematical.adam.vmap;
 
-import android.location.Location;
-import android.util.Log;
-
-import com.schematical.adam.AdamSensorDriver;
+import com.schematical.adam.sensors.AdamSensorDriver;
 
 /**
  * Created by user1a on 10/8/13.

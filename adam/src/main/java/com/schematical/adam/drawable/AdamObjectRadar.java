@@ -2,8 +2,7 @@ package com.schematical.adam.drawable;
 
 import android.graphics.Canvas;
 
-import com.schematical.adam.AdamObject;
-import com.schematical.adam.AdamView;
+import com.schematical.adam.model.old.AdamObject;
 
 /**
  * Created by user1a on 10/5/13.

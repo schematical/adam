@@ -1,12 +1,10 @@
 package com.schematical.adam.async;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.schematical.adam.AdamActivityMain;
-import com.schematical.adam.AdamObject;
+import com.schematical.adam.old.AdamActivityMain;
+import com.schematical.adam.model.old.AdamObject;
 import com.schematical.adam.location.AdamLocation;
 
 import org.apache.http.HttpEntity;

@@ -1,10 +1,7 @@
 package com.schematical.adam.drawable;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
-
-import com.schematical.adam.AdamView;
 
 import java.util.Enumeration;
 

@@ -7,8 +7,6 @@ import android.graphics.Typeface;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.schematical.adam.AdamView;
-
 import java.util.Hashtable;
 
 /**

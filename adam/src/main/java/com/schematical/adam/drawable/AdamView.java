@@ -1,4 +1,4 @@
-package com.schematical.adam;
+package com.schematical.adam.drawable;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,16 +11,10 @@ import android.util.Log;
 
 import android.view.*;
 
-import com.schematical.adam.drawable.AdamAction;
-import com.schematical.adam.drawable.AdamDPad;
-import com.schematical.adam.drawable.AdamDPadKey;
-import com.schematical.adam.drawable.AdamDrawable;
-import com.schematical.adam.drawable.AdamHud;
-import com.schematical.adam.drawable.AdamIcon;
-import com.schematical.adam.drawable.AdamObjectHud;
-import com.schematical.adam.drawable.AdamObjectMiniProfile;
-import com.schematical.adam.drawable.AdamRadar;
-import com.schematical.adam.drawable.iAdamDrawable;
+import com.schematical.adam.old.AdamActivityMain;
+import com.schematical.adam.model.old.AdamObject;
+import com.schematical.adam.sensors.AdamSensorDriver;
+import com.schematical.adam.R;
 import com.schematical.adam.renderer.Adam2DPoint;
 import com.schematical.adam.renderer.Adam3DEngine;
 import com.schematical.adam.vmap.AdamVisualMapDriver;

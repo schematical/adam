@@ -1,4 +1,4 @@
-package com.schematical.adam;
+package com.schematical.adam.old;
 
 
 import android.graphics.Paint;
@@ -12,13 +12,19 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 
+import com.schematical.adam.bluetooth.AdamBluetoothDriver;
+import com.schematical.adam.sensors.AdamSensorDriver;
+import com.schematical.adam.telephony.AdamTelephoneDriver;
+import com.schematical.adam.wifi.AdamWifiDriver;
+import com.schematical.adam.R;
 import com.schematical.adam.async.AdamSaveDriver;
+import com.schematical.adam.drawable.AdamView;
 import com.schematical.adam.img.AdamImgRecDriver;
 import com.schematical.adam.location.AdamLocation;
+import com.schematical.adam.model.old.AdamObject;
 import com.schematical.adam.socket.AdamSocketClient;
 import com.schematical.adam.tts.AdamTTSDriver;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Enumeration;
@@ -40,9 +46,9 @@ public class AdamActivityMain extends Activity {
     private String status;
 
 
-    private AdamWifiManager wifiReceiver;
+    private AdamWifiDriver wifiReceiver;
     private AdamSaveDriver saveDriver;
-    public AdamBluetooth bluetoothDriver;
+    public AdamBluetoothDriver bluetoothDriver;
 
     public boolean allowPing = false;
     public int pingCt = 0;
@@ -81,12 +87,12 @@ public class AdamActivityMain extends Activity {
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mView);
 
-        bluetoothDriver = new AdamBluetooth(this);
+        bluetoothDriver = new AdamBluetoothDriver(this);
 
         AdamTelephoneDriver.Init(this);
 
         aLocation = new AdamLocation(this);
-        wifiReceiver  = new AdamWifiManager(this);
+        wifiReceiver  = new AdamWifiDriver(this);
         wifiReceiver.StartScan();
         if(wifiReceiver.IsWifiConnected()){
             //this.SetStatus("Cannot scan while connected to wifi");
@@ -104,7 +110,7 @@ public class AdamActivityMain extends Activity {
     public void SetStatus(String nStatus){
         status = nStatus;
 
-        this.Speak(status);
+       // this.Speak(status);
     }
 
 

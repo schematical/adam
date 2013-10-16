@@ -1,16 +1,16 @@
-package com.schematical.adam;
+package com.schematical.adam.model.old;
 
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.util.Log;
 
+import com.schematical.adam.bluetooth.AdamBluetoothDriver;
+import com.schematical.adam.old.AdamActivityMain;
+import com.schematical.adam.bluetooth.AdamBluetoothScanResult;
 import com.schematical.adam.drawable.AdamIcon;
 import com.schematical.adam.drawable.AdamObjectHud;
 import com.schematical.adam.drawable.AdamObjectRadar;
-import com.schematical.adam.drawable.AdamRadar;
+import com.schematical.adam.drawable.AdamView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -150,7 +150,7 @@ public class AdamObject {
                     date.getTime()
             );
             this.alias = sr.name;
-            ap.pingType = AdamBluetooth.TYPE;
+            ap.pingType = AdamBluetoothDriver.TYPE;
             pings.add(ap);
             //UpdateLatLng();
         }

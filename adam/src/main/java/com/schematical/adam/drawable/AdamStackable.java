@@ -1,7 +1,5 @@
 package com.schematical.adam.drawable;
 
-import com.schematical.adam.AdamView;
-
 /**
  * Created by user1a on 10/6/13.
  */

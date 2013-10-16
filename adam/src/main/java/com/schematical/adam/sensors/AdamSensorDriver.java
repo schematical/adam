@@ -1,14 +1,13 @@
-package com.schematical.adam;
+package com.schematical.adam.sensors;
 
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.Location;
-import android.util.Log;
 
 import com.schematical.adam.location.AdamLocation;
+import com.schematical.adam.old.AdamActivityMain;
 
 import org.json.JSONException;
 import org.json.JSONObject;

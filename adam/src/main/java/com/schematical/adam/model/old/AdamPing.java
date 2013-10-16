@@ -1,9 +1,7 @@
-package com.schematical.adam;
+package com.schematical.adam.model.old;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.sql.Timestamp;
 
 /**
  * Created by user1a on 10/1/13.

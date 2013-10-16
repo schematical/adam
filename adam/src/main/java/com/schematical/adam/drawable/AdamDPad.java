@@ -1,13 +1,6 @@
 package com.schematical.adam.drawable;
 
 import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.view.MotionEvent;
-import android.view.View;
-
-import com.schematical.adam.AdamView;
 
 /**
  * Created by user1a on 10/6/13.

@@ -13,18 +13,10 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.nio.ByteOrder;
-import java.nio.CharBuffer;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
-
-import com.schematical.adam.AdamActivityMain;
+import com.schematical.adam.old.AdamActivityMain;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,11 +27,12 @@ public class AdamSocketClient {
     private Socket socket;
     private PrintWriter out;
     private static final int SERVERPORT = 1337;
-    private static final String SERVER_IP = "192.168.1.106";
+    private static final String SERVER_IP = "192.168.88.103";
     private static JSONObject jUpdateData;
 
     public AdamSocketClient(AdamActivityMain am) {
-        new Thread(new AdamSocketUpdater()).start();
+        new Thread(new ClientThread()).start();
+
 
     }
     public void InitWriter() throws IOException {
@@ -70,7 +63,7 @@ public class AdamSocketClient {
 
     }
     public void Write(String strOut){
-        if(false){//Shitty magic debugger
+        if(socket == null){//Shitty magic debugger
             return;
         }
         try {
@@ -105,9 +98,9 @@ public class AdamSocketClient {
         public void run() {
 
             try {
-                InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
+                InetAddress serverAddr = InetAddress.getByName(AdamSocketClient.SERVER_IP);
 
-                socket = new Socket(serverAddr, SERVERPORT);
+                socket = new Socket(serverAddr, AdamSocketClient.SERVERPORT);
                 AdamSocketUpdater updater = new AdamSocketUpdater();
                 updater.run();
 

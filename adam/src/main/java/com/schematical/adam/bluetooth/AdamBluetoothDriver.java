@@ -1,4 +1,4 @@
-package com.schematical.adam;
+package com.schematical.adam.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -6,27 +6,26 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.schematical.adam.AdamWorldActivity;
+import com.schematical.adam.old.AdamActivityMain;
+
 import java.util.Hashtable;
-import java.util.Set;
 
 /**
  * Created by user1a on 10/3/13.
  */
-public class AdamBluetooth extends BroadcastReceiver{
-    public static final String TYPE = "Bluetooth";
-    AdamActivityMain am;
+public class AdamBluetoothDriver extends BroadcastReceiver{
+
+
     BluetoothAdapter mBluetoothAdapter;
-    Hashtable<String, AdamBluetoothScanResult> aScanResults;
+
     private IntentFilter discoveryFinished;
     private IntentFilter actionFoundFilter;
 
-    AdamBluetooth(AdamActivityMain nAm){
-        am = nAm;
+    AdamBluetoothDriver(){
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        aScanResults = new Hashtable<String, AdamBluetoothScanResult>();
+
         if (mBluetoothAdapter == null) {
             // Device does not support Bluetooth
             return;
@@ -36,8 +35,10 @@ public class AdamBluetooth extends BroadcastReceiver{
 
 
     }
-    public void StartDiscovery(){
+    public void Start(){
+
         if (mBluetoothAdapter.isEnabled()) {
+            AdamWorldActivity am = AdamWorldActivity.getInstance();
             // Register the BroadcastReceiver
             actionFoundFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
             am.registerReceiver(this, actionFoundFilter); // Don't forget to unregister during onDestroy
@@ -47,8 +48,9 @@ public class AdamBluetooth extends BroadcastReceiver{
         }
         mBluetoothAdapter.startDiscovery();
     }
-    public void UnregisterListener(){
+    public void Disconnect(){
         try{
+            AdamWorldActivity am = AdamWorldActivity.getInstance();
             mBluetoothAdapter.cancelDiscovery();
             am.unregisterReceiver(this);
         }catch(RuntimeException e){
@@ -74,22 +76,17 @@ public class AdamBluetooth extends BroadcastReceiver{
             String  sAddress = device.getAddress();
             AdamBluetoothScanResult as =  new AdamBluetoothScanResult(
                     device,
-                    name,
                     rssi
             );
-            aScanResults.put(
-                sAddress,
-                as
-            );
-            am.UpdateAdamObject(sAddress, as);
+
         }
 
     }
     public void MakeDiscoverable(){
-        Intent discoverableIntent = new
-                Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-        am.startActivity(discoverableIntent);
+
+        AdamWorldActivity.getInstance().startActivity(discoverableIntent);
 
     }
 }

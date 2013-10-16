@@ -9,7 +9,7 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
-import com.schematical.adam.AdamActivityMain;
+import com.schematical.adam.old.AdamActivityMain;
 import com.schematical.adam.async.AdamGetLocationByAOTask;
 import com.schematical.adam.socket.AdamSocketClient;
 

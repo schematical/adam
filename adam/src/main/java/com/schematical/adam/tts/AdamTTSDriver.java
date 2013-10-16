@@ -3,7 +3,7 @@ package com.schematical.adam.tts;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
-import com.schematical.adam.AdamActivityMain;
+import com.schematical.adam.old.AdamActivityMain;
 
 import java.util.Locale;
 

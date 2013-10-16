@@ -2,11 +2,10 @@ package com.schematical.adam.drawable.opengl;
 
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.opengl.GLU;
 import android.opengl.Matrix;
 import android.util.Log;
 
-import com.schematical.adam.AdamSensorDriver;
+import com.schematical.adam.sensors.AdamSensorDriver;
 
 import javax.microedition.khronos.opengles.GL10;
 

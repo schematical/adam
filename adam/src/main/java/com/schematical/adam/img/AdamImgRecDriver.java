@@ -6,10 +6,7 @@ import android.hardware.Camera;
 import android.media.FaceDetector;
 import android.media.FaceDetector.Face;
 
-import com.schematical.adam.AdamActivityMain;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import com.schematical.adam.old.AdamActivityMain;
 
 /**
  * Created by user1a on 10/6/13.

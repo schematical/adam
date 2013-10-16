@@ -1,11 +1,9 @@
 package com.schematical.adam.drawable;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.location.Location;
 
-import com.schematical.adam.AdamActivityMain;
-import com.schematical.adam.AdamView;
+import com.schematical.adam.old.AdamActivityMain;
 
 /**
  * Created by user1a on 10/1/13.

@@ -1,9 +1,11 @@
-package com.schematical.adam;
+package com.schematical.adam.telephony;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.telephony.CellInfo;
 import android.telephony.TelephonyManager;
+
+import com.schematical.adam.old.AdamActivityMain;
 
 import java.util.List;
 

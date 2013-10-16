@@ -6,12 +6,9 @@ import android.location.Location;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.schematical.adam.AdamActivityMain;
-import com.schematical.adam.AdamObject;
-import com.schematical.adam.AdamSensorDriver;
-import com.schematical.adam.AdamView;
-import com.schematical.adam.drawable.AdamDrawable;
-import com.schematical.adam.drawable.opengl.AdamOpenGLIcon;
+import com.schematical.adam.old.AdamActivityMain;
+import com.schematical.adam.model.old.AdamObject;
+import com.schematical.adam.sensors.AdamSensorDriver;
 import com.schematical.adam.location.AdamLocation;
 import com.schematical.adam.renderer.Adam2DPoint;
 import com.schematical.adam.renderer.Adam3DEngine;

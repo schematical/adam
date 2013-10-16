@@ -4,8 +4,8 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.schematical.adam.AdamActivityMain;
-import com.schematical.adam.AdamObject;
+import com.schematical.adam.old.AdamActivityMain;
+import com.schematical.adam.model.old.AdamObject;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;

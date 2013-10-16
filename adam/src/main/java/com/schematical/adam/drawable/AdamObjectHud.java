@@ -1,14 +1,8 @@
 package com.schematical.adam.drawable;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Typeface;
-import android.location.Location;
 
-import com.schematical.adam.AdamActivityMain;
-import com.schematical.adam.AdamObject;
-import com.schematical.adam.AdamView;
-import com.schematical.adam.R;
+import com.schematical.adam.model.old.AdamObject;
 
 /**
  * Created by user1a on 10/5/13.
